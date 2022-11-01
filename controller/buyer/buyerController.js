@@ -1,3 +1,6 @@
+const buyerService = require("../../service/buyerService.js");
+const model = require('../../models/db');
+
 exports.getBuyer = async (req,res) => { res.send ("single user") };
 
 exports.getBuyers = async (req,res) => { res.send ("all user") };
