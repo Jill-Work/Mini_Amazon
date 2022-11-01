@@ -9,7 +9,7 @@
  // define model
 
  module.exports = (sequelize , DataTypes)=>{
-    const seller = sequelize.define('seller', {
+    const seller = sequelize.define('sellers', {
         id:{
             type:DataTypes.INTEGER,
             autoIncrement: true,

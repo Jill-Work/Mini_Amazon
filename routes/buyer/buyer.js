@@ -3,15 +3,15 @@ const router = express.Router();
 const buyerController = require("../../controller/buyer/buyerController")
 
 
-router.get("/get", buyerController.getBuyer);
+router.get("/get/:id", buyerController.getBuyer);
 
 router.get("/gets", buyerController.getBuyers);
 
-router.post("/post", buyerController.addBuyer);
+router.post("/add", buyerController.addBuyer);
 
-router.put("/put", buyerController.updateBuyer);
+router.put("/update/:id", buyerController.updateBuyer);
 
-router.delete("/delete", buyerController.deleteBuyer);
+router.delete("/delete/:id", buyerController.deleteBuyer);
 
 //      log in or token generator
 // router.get("/all",(req,res) => { res.send ("all user") });
