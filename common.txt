@@ -1,0 +1,71 @@
+Ecommerce Backend :
+====================
+
+
+- Steps to follow :
+	1) First Create Documentation for MiniAmazon App
+	1) Table Or Module list
+	2) Rest API (Crud & Other Queries)
+
+
+
+- Module list : 
+	1) User
+	2) Product
+	3) order
+
+- Apis :
+	1) User Signup
+	2) Login
+	3) Products CRUD[Create,Read, Update, Delete]
+	4) Orders [Generate Invoice, Order list]
+	5) User list
+	6) Search Product 
+	7) Change Password
+	8) Forgot Password
+
+
+- Fields : 
+	User : 
+		- email
+		- FirstName
+		- LastName
+		- password
+
+	Product : 
+		- productName
+		- seller
+		- image
+		- brand
+		- category
+		- description
+		- price
+		- countInstock
+		- rating	
+
+	Order :
+		- name
+		- qty
+		- image
+		- price
+		- product : { ref: product }
+		- shippingAddress : {
+			- fullName 
+			- address
+			- city
+			- postalCode
+			- country
+		} 
+		- paymentMethod
+		- itemsPrice
+    	- shippingPrice: 
+     	- taxPrice:
+    	- totalPrice
+    	- user
+    	- seller
+    	- isPaid
+    	- paidAt
+    	- isDelivered
+    	- deliveredAt
+
+
