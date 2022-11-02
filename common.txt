@@ -38,6 +38,11 @@ E-commerce Backend :
 		- image
 		- brand
 		- category
+			- Clothes
+			- Food
+			- Electronics
+			- Laptop
+			- Mobile
 		- description
 		- price
 		- countInstock
