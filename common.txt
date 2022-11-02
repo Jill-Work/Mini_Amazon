@@ -26,51 +26,60 @@ E-commerce Backend :
 
 
 - Fields : 
-	User : 
-		- email
-		- FirstName
-		- LastName
-		- password
+		Buyer : 
+			- FirstName
+			- LastName
+			- Contact_Num
+			- Email
+			- Password
+		
+		Seller :
+			- FirstName
+			- LastName
+			- Contact_Num
+			- Email
+			- Password
+		
 
-	Product : 
-		- productName
-		- seller
-		- image
-		- brand
-		- category
-			- Clothes
-			- Food
-			- Electronics
-			- Laptop
-			- Mobile
-		- description
-		- price
-		- countInstock
-		- rating	
+		Product : 
+			- productName
+			- seller
+			- image
+			- brand
+			- category
+				- Clothes
+				- Food
+				- Electronics
+				- Laptop
+				- Mobile
+			- description
+			- price
+			- countInstock
+			- rating	
 
-	Order :
-		- name
-		- qty
-		- image
-		- price
-		- product : { ref: product }
-		- shippingAddress : {
-			- fullName 
-			- address
-			- city
-			- postalCode
-			- country
-		} 
-		- paymentMethod
-		- itemsPrice
-    	- shippingPrice: 
-     	- taxPrice:
-    	- totalPrice
-    	- user
-    	- seller
-    	- isPaid
-    	- paidAt
-    	- isDelivered
-    	- deliveredAt
+		Order :
+			- name
+			- qty
+			- image
+			- price
+			- product : { ref: product }
+			- shippingAddress : {
+				- fullName 
+				- address
+				- city
+				- postalCode
+				- country
+			} 
+			- paymentMethod
+			- itemsPrice
+    		- shippingPrice: 
+     		- taxPrice:
+    		- totalPrice
+    		- user
+    		- seller
+    		- isPaid
+    		- paidAt
+    		- isDelivered
+    		- deliveredAt
 
 
