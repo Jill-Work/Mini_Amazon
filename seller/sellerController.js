@@ -1,7 +1,8 @@
 const sellerService = require("./sellerService");
 const model = require('../models/db');
+const bcrypt = require('bcrypt');
 
-
+// get student
 exports.getSeller = async (req,res) => { 
     const id = req.params.id;
     console.log("id in seller controller ", id)
@@ -11,20 +12,34 @@ exports.getSeller = async (req,res) => {
     console.log("buyer in seller controller",buyer);
 };
 
+// get students
 exports.getSellers = async (req,res) => { 
     const buyers = await sellerService.getSellers();
     res.send(buyers);
     console.log("seller in controller",buyers);
  };
 
+// insert student
 exports.addSeller = async (req,res) => { 
     const data = req.body;
-    console.log("seller data in buyer controller",data);
+    var password = data.password;
 
-    const buyer = await sellerService.addSeller(data);
-    res.send(buyer)
+    const salt = await bcrypt.genSalt(10);
+    password = await bcrypt.hash(password, salt)
+
+    if (data.password === data.conpassword) {
+        data.password = password;
+
+        const buyer = await sellerService.addSeller(data);
+        res.send(buyer)
+        console.log("create buyer is in buyer controller  ==>>  "+JSON.stringify(buyer));
+    } else {
+        res.send("invalid confirm password");
+        console.log("invalid confirm password in student controller");
+    } 
  };
 
+// update student
 exports.updateSeller = async (req,res) => { 
     const id = req.params.id;
     const update = {
@@ -36,6 +51,7 @@ exports.updateSeller = async (req,res) => {
     res.send(buyer);
  };
 
+// delete student
 exports.deleteSeller = async (req,res) => { 
     const id = req.params.id;
     const seller = await sellerService.deleteSeller(id);

@@ -1,5 +1,6 @@
 const buyerService = require("./buyerService");
 const model = require('../models/db');
+const bcrypt = require('bcrypt');
 
 // get student
 exports.getBuyer = async (req,res) => { 
@@ -20,10 +21,21 @@ exports.getBuyers = async (req,res) => {
 // insert student
 exports.addBuyer = async (req,res) => { 
     const data = req.body;
-    console.log("buyer data in buyer controller",data);
+    var password = data.password;
 
-    const buyer = await buyerService.addBuyer(data);
-    res.send(buyer)
+    const salt = await bcrypt.genSalt(10);
+    password = await bcrypt.hash(password, salt);
+
+    if (data.password === data.conpassword) {
+        data.password = password;
+
+        const buyer = await buyerService.addBuyer(data);
+        res.send(buyer)
+        console.log("create buyer is in buyer controller  ==>>  "+JSON.stringify(buyer));
+    } else {
+        res.send("invalid confirm password");
+        console.log("invalid confirm password in student controller");
+    } 
  };
 
 // update student
