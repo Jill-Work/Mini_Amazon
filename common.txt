@@ -83,3 +83,9 @@ E-commerce Backend :
     		- deliveredAt
 
 
+JILL
+	-	folder structure
+	-	Buyer CURD OP
+
+
+NIKHIL
