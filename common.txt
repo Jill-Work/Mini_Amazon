@@ -85,7 +85,13 @@ E-commerce Backend :
 
 JILL
 	-	folder structure
-	-	Buyer CURD OP
+	-	Buyer CURD Operation
+	-	Seller CURD Operation
+	-	Bcrypt Password hashing in both
+	- 	Joi Validation completed
+	-	
+
+
 
 
 NIKHIL
