@@ -1,4 +1,4 @@
-Ecommerce Backend :
+E-commerce Backend :
 ====================
 
 
@@ -15,7 +15,7 @@ Ecommerce Backend :
 	3) order
 
 - Apis :
-	1) User Signup
+	1) User Sign up
 	2) Login
 	3) Products CRUD[Create,Read, Update, Delete]
 	4) Orders [Generate Invoice, Order list]
