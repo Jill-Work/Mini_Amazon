@@ -21,6 +21,9 @@
         last_name:{
             type:DataTypes.STRING(100)
         },
+        contact_num:{
+            type:DataTypes.INTEGER(10)
+        },
         email:{
             type:DataTypes.STRING(100)
         },

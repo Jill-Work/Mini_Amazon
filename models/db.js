@@ -14,8 +14,8 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 //      connecting db to model
-db.buyer = require("./buyerModel.js")(sequelize , DataTypes);
-db.seller = require("./sellerModel.js")(sequelize , DataTypes);
+db.buyer = require("./buyerModel")(sequelize , DataTypes);
+db.seller = require("./sellerModel")(sequelize , DataTypes);
 
 //      sync db
 db.sequelize.sync({force:false})

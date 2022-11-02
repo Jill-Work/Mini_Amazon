@@ -1,5 +1,5 @@
-const sellerService = require("../../service/sellerService.js");
-const model = require('../../models/db');
+const sellerService = require("./sellerService");
+const model = require('../models/db');
 
 
 exports.getSeller = async (req,res) => { 
