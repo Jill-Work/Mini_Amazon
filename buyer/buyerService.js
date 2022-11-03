@@ -1,34 +1,33 @@
 const { where } = require('sequelize');
 const model = require("../models/db");
 
-
-// get student
-exports.getBuyer = async (id) => {
+// get buyer
+exports.getBuyer = async (email) => {
     return await model.buyer.findOne({
-        where:{id}
+        where:{email}
     })
 };
 
 
-// get students
+// get buyers
 exports.getBuyers = async () => {
     return await model.buyer.findAll({})
 };
 
 
-// insert student
+// add buyer by admin
 exports.addBuyer = async (data) => {
     return await model.buyer.create(data);
 };
 
 
-// update student
+// update buyer
 exports.updateBuyer = async (id,update) => {
     return await model.buyer.update(update,{where:{id}});
 };
 
 
-// delete student
+// delete buyer
 exports.deleteBuyer = async (id) => {
     return await model.buyer.destroy({where:{id}});
 };

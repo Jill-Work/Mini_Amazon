@@ -1,7 +1,7 @@
 const { where } = require('sequelize');
 const model = require("../models/db");
 
-// get student
+// get seller
 exports.getSeller = async (id) => {
     return await model.seller.findOne({
         where:{id}
@@ -9,25 +9,25 @@ exports.getSeller = async (id) => {
 };
 
 
-// get students
+// get sellers
 exports.getSellers = async () => {
     return await model.seller.findAll({})
 };
 
 
-// insert student
+// insert seller
 exports.addSeller = async (data) => {
     return await model.seller.create(data);
 };
 
 
-// update student
+// update seller
 exports.updateSeller = async (id,update) => {
     return await model.seller.update(update,{where:{id}});
 };
 
 
-// delete student
+// delete seller
 exports.deleteSeller = async (id) => {
     return await model.seller.destroy({where:{id}});
 };

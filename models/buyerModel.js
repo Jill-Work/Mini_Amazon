@@ -25,7 +25,13 @@
             type:DataTypes.INTEGER(10)
         },
         email:{
-            type:DataTypes.STRING(100)
+            type:DataTypes.STRING(100),
+            unique : true ,
+            // validate: {
+            //     isEmail: {
+            //       msg: "Must be an EMAIL ##CUSTOM MESSAGE##",
+            //     },
+            //   },
         },
         password:{
             type:DataTypes.STRING(225)

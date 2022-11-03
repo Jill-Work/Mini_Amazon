@@ -23,6 +23,14 @@ E-commerce Backend :
 	6) Search Product 
 	7) Change Password
 	8) Forgot Password
+	9) placeOrder 
+	10) Order History
+	11) Order list
+	12) list seller
+	13) product seller
+	14) order seller
+	15) Role Update
+	16) Admin User login Api
 
 
 - Fields : 
@@ -85,7 +93,13 @@ E-commerce Backend :
 
 JILL
 	-	folder structure
-	-	Buyer CURD OP
+	-	Buyer CURD Operation
+	-	Seller CURD Operation
+	-	Bcrypt Password hashing in both
+	- 	Joi Validation completed
+	-	
+
+
 
 
 NIKHIL
