@@ -2,14 +2,11 @@ const express = require('express');
 const router = express.Router();
 
 //      require files
-const buyer = require("../buyer/buyer");
-const seller = require("../seller/seller")
+const users = require("../users/users")
 
-// router.use("/",buyer);
 
-router.use("/buyer",buyer);
+router.use("/users",users);
 
-router.use("/seller",seller);
 
 module.exports=router;
 
