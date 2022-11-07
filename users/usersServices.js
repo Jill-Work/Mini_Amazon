@@ -1,18 +1,9 @@
 const { where } = require('sequelize');
 const model = require("../models/db");
 
-// get user
-exports.getUser = async (email) => {
-    // console.log("role == ",role);
-    return await model.users.findOne({
-        where:{email}
-    })
-};
-
-
 // get users
-exports.getUsers = async () => {
-    return await model.users.findAll({})
+exports.getUsers = async (condition) => {
+    return await model.users.findAll(condition)
 };
 
 
@@ -25,7 +16,7 @@ exports.addUsers = async (data) => {
 // log in user
 exports.signUp = async (email) => {
     return await model.users.findOne({where:{email}})
-}
+};
 
 // update users
 exports.updateUsers = async (email,update) => {

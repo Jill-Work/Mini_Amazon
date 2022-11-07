@@ -4,22 +4,25 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const env = require("../.env");
 const role = require("../models/role");
-const { date } = require("joi");
 
 // get users
-exports.getUser = async (req, res) => {
-    const email = req.query.email;
-    const users = await usersService.getUser(email)
-    res.send(users);
-    console.log("getUser in controller",users.dataValues);
-};
-
-
-// get userss
 exports.getUsers = async (req, res) => {
-    const users = await usersService.getUsers();
-    res.send(users);
-    console.log("users in controller", users);
+    let condition = {};
+
+    if (req.query.search) {
+        condition = {
+            where: { "email": req.query.search }
+        }
+    } else {
+        condition = {
+            limit: parseInt(req.query.size),
+            offset: parseInt(req.query.size) * parseInt((req.query.page - 1)),
+        }
+    }
+
+    const users = await usersService.getUsers(condition);
+    res.status(200).json( users );
+    console.log("Get users in controller", users);
 };
 
 //  Sign Up
@@ -46,11 +49,11 @@ exports.logIn = async (req, res) => {
             console.log("log in in user controller  ==>>  " + JSON.stringify(user));
 
         } else {
-            res.send("invalid details");
+            res.status(404).json({ error : "invalid details"});
             console.log("invalid details in student controller");
         }
     })
-}
+};
 
 
 // update users
@@ -64,7 +67,7 @@ exports.updateUsers = async (req, res) => {
         password: req.body.password,
     }
     const users = await usersService.updateUsers(email, update);
-    res.send({ ...users, update });
+    res.status(200).json({ ...users, update });
     console.log("update in users controller", users, update);
 };
 
@@ -72,7 +75,7 @@ exports.updateUsers = async (req, res) => {
 exports.deleteUsers = async (req, res) => {
     const email = req.query.email;
     const users = await usersService.deleteUsers(email);
-    res.send("deleted is was = " + email);
+    res.status(200).json({"Deleted is was":email});
     console.log("deleted users id is in users controller  ==>>  " + email);
 };
 
@@ -81,16 +84,10 @@ exports.admin = async (req,res) => {
     await addUser(req,res,values)
 };
 
-
-
-
+//  Add User Function
 async function addUser(req,res,values) {    
     const data = req.body;
-    console.log("data",data);
-    
     const match = values.find(element => element == data.role);
-    console.log("match",match);
-    
     const oldusers = await usersService.getUser(data.email);
 
     if ((!oldusers)&&(data.role === match)) {
@@ -103,18 +100,18 @@ async function addUser(req,res,values) {
         if (data.password === data.conpassword) {
             data.password = password;
             const users = await usersService.addUsers(data);
-            const usersData = { ...users.dataValues, token }
-            res.send(usersData)
+            const usersData = { ...users.dataValues, token };
+            res.status(200).json(usersData);
             console.log("create users is in users controller  ==>>  " + JSON.stringify(usersData));
         } else {
-            res.send("invalid confirm password");
+            res.status(401).json({massage:"Invalid Confirm Password"});
             console.log("invalid confirm password in users controller");
         }
     }
 
     else {
+        res.status(401).json({massage:"users Already exits"});
         console.log("users Already exits");
-        res.send("users Already exits");
     }
 
 };
