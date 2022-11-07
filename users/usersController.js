@@ -3,15 +3,17 @@ const model = require('../models/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const env = require("../.env");
+const role = require("../models/role");
+const { date } = require("joi");
 
 // get users
 exports.getUser = async (req, res) => {
     const email = req.query.email;
     const users = await usersService.getUser(email)
     res.send(users);
-    console.log("users in controller", users.dataValues);
-
+    console.log("getUser in controller",users.dataValues);
 };
+
 
 // get userss
 exports.getUsers = async (req, res) => {
@@ -22,32 +24,8 @@ exports.getUsers = async (req, res) => {
 
 //  Sign Up
 exports.signUp = async (req, res) => {
-    const data = req.body;
-    const oldusers = await usersService.getUser(data.email);
-
-    if (!oldusers) {
-
-        var password = data.password;
-        const token = jwt.sign({ "email": data }, SECRET_KEY);
-        const salt = await bcrypt.genSalt(10);
-        password = await bcrypt.hash(password, salt);
-
-        if (data.password === data.conpassword) {
-            data.password = password;
-            const users = await usersService.addUsers(data);
-            const usersData = { ...users.dataValues, token }
-            res.send(usersData)
-            console.log("create users is in users controller  ==>>  " + JSON.stringify(usersData));
-        } else {
-            res.send("invalid confirm password");
-            console.log("invalid confirm password in users controller");
-        }
-    }
-
-    else {
-        console.log("users Already exits");
-        res.send("users Already exits");
-    }
+    const values = ['BUYER','SELLER']
+    await addUser (req,res,values)
 };
 
 
@@ -65,7 +43,6 @@ exports.logIn = async (req, res) => {
             const token = jwt.sign({ "email": user }, SECRET_KEY);
             console.log("token   ==>.  " + token);
             res.status(200).json({ token });
-            // res.send(user);
             console.log("log in in user controller  ==>>  " + JSON.stringify(user));
 
         } else {
@@ -97,4 +74,47 @@ exports.deleteUsers = async (req, res) => {
     const users = await usersService.deleteUsers(email);
     res.send("deleted is was = " + email);
     console.log("deleted users id is in users controller  ==>>  " + email);
+};
+
+exports.admin = async (req,res) => {
+    const values = ['ADMIN']
+    await addUser(req,res,values)
+};
+
+
+
+
+async function addUser(req,res,values) {    
+    const data = req.body;
+    console.log("data",data);
+    
+    const match = values.find(element => element == data.role);
+    console.log("match",match);
+    
+    const oldusers = await usersService.getUser(data.email);
+
+    if ((!oldusers)&&(data.role === match)) {
+        
+        var password = data.password;
+        const token = jwt.sign({ "email": data }, SECRET_KEY);
+        const salt = await bcrypt.genSalt(10);
+        password = await bcrypt.hash(password, salt);
+        
+        if (data.password === data.conpassword) {
+            data.password = password;
+            const users = await usersService.addUsers(data);
+            const usersData = { ...users.dataValues, token }
+            res.send(usersData)
+            console.log("create users is in users controller  ==>>  " + JSON.stringify(usersData));
+        } else {
+            res.send("invalid confirm password");
+            console.log("invalid confirm password in users controller");
+        }
+    }
+
+    else {
+        console.log("users Already exits");
+        res.send("users Already exits");
+    }
+
 };

@@ -13,9 +13,9 @@ module.exports = (sequelize , DataTypes)=>{
             autoIncrement: true,
             primaryKey: true
         },
-        role:{
-            type:DataTypes.TEXT,
-        },
+        role: {
+            type:DataTypes.STRING(100)
+          },
         first_name:{
             type:DataTypes.STRING(100)
         },
