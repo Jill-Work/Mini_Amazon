@@ -1,7 +1,6 @@
 const express = require('express');
 const env = require('./.env')
 const router = require('./routes')
-// const model = require('./models/db')
 
 const app = express();
 app.use(express.json());

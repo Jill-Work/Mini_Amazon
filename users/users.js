@@ -1,10 +1,10 @@
 const express = require('express');
-const 
-router = express.Router();
+const router = express.Router();
 const usersController = require("../users/usersController")
 const usersMiddleware = require("../middleware/usersMiddleware")
+const routeMiddleware = require("../middleware/routeMiddleware")
 
-router.get("/get", usersMiddleware.userAuth, usersController.getUser);
+router.get("/get",  usersMiddleware.userAuth, usersController.getUser);
 
 router.get("/gets", usersController.getUsers);
 
@@ -16,6 +16,7 @@ router.put("/update", usersMiddleware.userAuth, usersController.updateUsers);
 
 router.delete("/delete", usersMiddleware.userAuth,  usersController.deleteUsers);
 
+router.post("/adminsignup", usersController.admin)
+ 
 
-
-module.exports = router;
+module.exports=router;
