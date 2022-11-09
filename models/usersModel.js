@@ -1,20 +1,21 @@
  // require module
- const express = require('express');
-
- const app = express();
+const express = require('express');
+const app = express();
 
  
  
+// define model
 
- // define model
-
- module.exports = (sequelize , DataTypes)=>{
-    const seller = sequelize.define('sellers', {
+module.exports = (sequelize , DataTypes)=>{
+    const users = sequelize.define('users', {
         id:{
             type:DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true
         },
+        role: {
+            type:DataTypes.STRING(100)
+          },
         first_name:{
             type:DataTypes.STRING(100)
         },
@@ -33,7 +34,7 @@
     },{
         timestamps:false,
     })
-    return seller;
+    return users;
 };
 
 
