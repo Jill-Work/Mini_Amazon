@@ -1,5 +1,6 @@
  // require module
  const express = require('express');
+const { Sequelize } = require('./db');
 
  const app = express();
 
@@ -15,7 +16,7 @@
         productName: {
             type:DataTypes.STRING(100)
         },
-        seller: {
+        seller_id: {
             type:DataTypes.STRING(100)
         },
         image: {
@@ -25,11 +26,8 @@
             type:DataTypes.STRING(100)
         },
         category: {
-            // - Clothes
-            // - Food
-            // - Electronics
-            // - Laptop
-            // - Mobile
+            type: DataTypes.ENUM,
+            values: ['Clothes','Laptops','Mobiles']
         },
         description: {
             type:DataTypes.STRING(100)

@@ -14,6 +14,10 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 //      connecting db to model
+db.buyer = require("./buyerModel")(sequelize , DataTypes);
+db.seller = require("./sellerModel")(sequelize , DataTypes);
+db.product = require("./productModel")(sequelize , DataTypes);
+
 db.users = require("./usersModel")(sequelize , DataTypes);
 db.role = require("./role")(sequelize , DataTypes)
 db.routeauth = require("./routeModel")(sequelize , DataTypes)
