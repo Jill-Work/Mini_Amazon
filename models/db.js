@@ -19,8 +19,9 @@ db.seller = require("./sellerModel")(sequelize , DataTypes);
 db.product = require("./productModel")(sequelize , DataTypes);
 
 db.users = require("./usersModel")(sequelize , DataTypes);
-db.role = require("./role")(sequelize , DataTypes)
-db.routeauth = require("./routeModel")(sequelize , DataTypes)
+db.role = require("./role")(sequelize , DataTypes);
+db.routeauth = require("./routeModel")(sequelize , DataTypes);
++
 
 //      sync db
 // db.sequelize.sync({force:true})

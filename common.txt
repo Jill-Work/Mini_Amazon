@@ -56,9 +56,12 @@ E-commerce Backend :
 			- brand
 			- category
 				- Clothes
-				- Food
-				- Electronics
+					-type
+					-brand
+					-size
+					-color
 				- Laptop
+					-brand
 				- Mobile
 			- description
 			- price
@@ -93,13 +96,18 @@ E-commerce Backend :
 
 JILL
 	-	folder structure
-	-	Buyer CURD Operation
-	-	Seller CURD Operation
+	-	User (Buyer , Seller , Admin) CURD 
 	-	Bcrypt Password hashing in both
 	- 	Joi Validation completed
+	-	Sanitization
+	-	Route Authorization (Admin or User  in middleware)
+	-	Pagination in Users data (page , size)
 	-	
 
 
 
-
 NIKHIL
+
+
+
+
