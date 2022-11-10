@@ -56,9 +56,12 @@ E-commerce Backend :
 			- brand
 			- category
 				- Clothes
-				- Food
-				- Electronics
+					-type
+					-brand
+					-size
+					-color
 				- Laptop
+					-brand
 				- Mobile
 			- description
 			- price

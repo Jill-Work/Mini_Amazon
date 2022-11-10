@@ -1,5 +1,21 @@
-const { where } = require('sequelize');
+const { where , Op } = require('sequelize');
 const model = require("../models/db");
+
+
+//get user
+exports.getUser = async (email) => {
+    return await model.users.findOne({where:{email}})
+}
+
+//get profile
+exports.profile = async (contact_num) => {
+    return await model.users.findAll({ 
+        where : {
+            [Op.or]:[
+                {contact_num}
+            ]} 
+        })
+};
 
 // get users
 exports.getUsers = async (condition) => {
