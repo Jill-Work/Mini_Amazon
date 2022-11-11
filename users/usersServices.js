@@ -4,7 +4,7 @@ const model = require("../models/db");
 
 //get user
 exports.getUser = async (email) => {
-    const user = await model.users.findOne({where:{email}});
+    await model.users.findOne({where:{email}});
     return;
 }
 
