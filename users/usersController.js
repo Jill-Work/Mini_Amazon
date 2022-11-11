@@ -22,7 +22,7 @@ exports.getUsers = async (req, res) => {
     try {
         const { query } = req.query;
         let condition = {};
-        if (req.query.search) {
+        if (query.search) {
             condition = {
                 where: { "email": query.search }
             }
@@ -57,10 +57,9 @@ exports.signUp = async (req, res) => {
 exports.logIn = async (req, res) => {
     try {
         const { password , email } = req.body;
-        // const bodyRole = bodydata.role;
         const users = await usersService.getUser(email);
-        const userPass = users.password;
-        bcrypt.compare(password, userPass, (err, data) => {
+        const userPassword = users.password;
+        bcrypt.compare(password, userPassword, (err, data) => {
             if (err) throw err
 
             if (data) {
@@ -82,7 +81,7 @@ exports.updateUsers = async (req, res) => {
     try {
         const email = req.user.email;
         const body = req.body;
-        const dbEmail = await usersService.getUser(email);
+        const userDbEmail = await usersService.getUser(email);
         let update = {};
         if (body.firstName.length != 0 ) {
             update.firstName = body.firstName;
@@ -107,7 +106,7 @@ exports.updateUsers = async (req, res) => {
             }
         };
         
-        await usersService.updateUsers(dbEmail.dataValues.email, update);
+        await usersService.updateUsers(userDbEmail.dataValues.email, update);
         res.status(200).json(update);
     } catch (error) {
         res.status(403).json({

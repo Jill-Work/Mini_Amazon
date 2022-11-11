@@ -1,8 +1,5 @@
-const express = require("express");
-const app = express();
 const jwt = require('jsonwebtoken');
-const usersService = require("../users/usersServices");
-const bcrypt = require('bcrypt');
+
 require('dotenv').config();
 
 

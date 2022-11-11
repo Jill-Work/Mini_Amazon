@@ -4,8 +4,7 @@ const model = require("../models/db");
 
 //get user
 exports.getUser = async (email) => {
-    await model.users.findOne({where:{email}});
-    return;
+    return await model.users.findOne({where:{email}});
 }
 
 //get profile
@@ -15,12 +14,12 @@ exports.profile = async (contactNumber) => {
             [Op.or]:[
                 {contactNumber}
             ]} 
-        })
+        });
 };
 
 // get users
 exports.getUsers = async (condition) => {
-    return await model.users.findAll(condition)
+    return await model.users.findAll(condition);
 };
 
 
@@ -32,7 +31,7 @@ exports.addUsers = async (data) => {
 
 // log in user
 exports.signUp = async (email) => {
-    return await model.users.findOne({where:{email}})
+    return await model.users.findOne({where:{email}});
 };
 
 // update users
