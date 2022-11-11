@@ -97,12 +97,12 @@ E-commerce Backend :
 JILL
 	-	folder structure
 	-	User (Buyer , Seller , Admin) CURD 
+	-	Change Password API 
 	-	Bcrypt Password hashing in both
 	- 	Joi Validation completed
 	-	Sanitization
 	-	Route Authorization (Admin or User  in middleware)
 	-	Pagination in Users data (page , size)
-	-	
 
 
 
