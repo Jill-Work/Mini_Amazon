@@ -18,6 +18,7 @@
          }    
      },{
          timestamps:false,
+         underscored:true,
      })
      return users;
  };

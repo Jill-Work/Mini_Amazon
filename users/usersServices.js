@@ -4,15 +4,16 @@ const model = require("../models/db");
 
 //get user
 exports.getUser = async (email) => {
-    return await model.users.findOne({where:{email}})
+    const user = await model.users.findOne({where:{email}});
+    return;
 }
 
 //get profile
-exports.profile = async (contact_num) => {
+exports.profile = async (contactNumber) => {
     return await model.users.findAll({ 
         where : {
             [Op.or]:[
-                {contact_num}
+                {contactNumber}
             ]} 
         })
 };

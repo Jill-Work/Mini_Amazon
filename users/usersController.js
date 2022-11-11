@@ -1,164 +1,197 @@
 const usersService = require("./usersServices");
-const model = require('../models/db');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const env = require("../.env");
-const role = require("../models/role");
-const { tokenJwt, addUser } = require("../comman/helper");
+const { tokenJwt } = require("../common/common");
 
-
-
-// get users
+// get user
 exports.getUser = async (req, res) => {
-    const email = req.query.email;
-    const users = await usersService.getUser(email)
-    res.send(users);
-    console.log("getUser in controller",users.dataValues);
+    try {
+        const { email } = req.query;
+        const users = await usersService.getUser(email)
+        console.log("users",users);
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(403).json({
+            message: error + 'Server error occurred'
+        })
+    }
 };
-
 
 // get users
 exports.getUsers = async (req, res) => {
-    console.log("hello  =       = = =      ");
-    let condition = {};
-
-    if (req.query.search) {
-        condition = {
-            where: { "email": req.query.search }
+    try {
+        const { query } = req.query;
+        let condition = {};
+        if (req.query.search) {
+            condition = {
+                where: { "email": query.search }
+            }
+        } else if (query.size && query.page) {
+            condition = {
+                limit: parseInt(query.size),
+                offset: parseInt(query.size) * parseInt((query.page - 1)),
+            }
         }
-    } else {
-        condition = {
-            limit: parseInt(req.query.size),
-            offset: parseInt(req.query.size) * parseInt((req.query.page - 1)),
-        }
+        const users = await usersService.getUsers(condition);
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(403).json({
+            message: error + 'Server error occurred'
+        })
     }
-
-    const users = await usersService.getUsers(condition);
-    res.status(200).json( users );
-    console.log("Get users in controller", users);
 };
 
 //  Sign Up
 exports.signUp = async (req, res) => {
-    const values = ['BUYER','SELLER']
-    await addUser (req,res,values)
+    try {
+        const values = ['BUYER', 'SELLER']
+        await addUser(req, res, values)
+    } catch (error) {
+        res.status(403).json({
+            message: error + 'Server error occurred'
+        })
+    }
 };
-
 
 // log in
 exports.logIn = async (req, res) => {
-    const bodydata = req.body;
-    const bodyRole = bodydata.role;
-    const password = bodydata.password;
-    const email = bodydata.email
-    const users = await usersService.getUser(email);
-    console.log("user in log in ",users);
-    const userPass = users.password;
-    bcrypt.compare(password, userPass, (err, data) => {
-        
-        if (err) throw err
+    try {
+        const { password , email } = req.body;
+        // const bodyRole = bodydata.role;
+        const users = await usersService.getUser(email);
+        const userPass = users.password;
+        bcrypt.compare(password, userPass, (err, data) => {
+            if (err) throw err
 
-        if (data) {
-            const token = tokenJwt(users);
-            console.log("token   ==>.  " + token);
-            res.status(200).json({ token });
-        } else {
-            res.status(404).json({ error : "invalid details"});
-            console.log("invalid details in student controller");
-        }
-    })
+            if (data) {
+                const token = tokenJwt(users);
+                res.status(200).json({ token });
+            } else {
+                res.status(404).json({ error: "invalid details" });
+            }
+        })
+    } catch (error) {
+        res.status(403).json({
+            message: error + 'Server error occurred'
+        })
+    }
 };
-
 
 // update users
 exports.updateUsers = async (req, res) => {
-    const email = req.user.email
-    const dbEmail = await usersService.getUser(email);
-    console.log("dbemail",email)
-    let update = {};
-    if((req.body.hasOwnProperty("first_name"))||(req.body.hasOwnProperty("last_name"))){
-        if (req.body.first_name != dbEmail.dataValues.first_name) {
-            update.first_name = req.body.first_name;
-        }else{
-            update.first_name = dbEmail.dataValues.first_name;
+    try {
+        const email = req.user.email;
+        const body = req.body;
+        const dbEmail = await usersService.getUser(email);
+        let update = {};
+        if (body.firstName.length != 0 ) {
+            update.firstName = body.firstName;
         }
-        if (req.body.last_name != dbEmail.dataValues.last_name) {
-            update.last_name = req.body.last_name;
-        }else{
-            update.last_name = dbEmail.dataValues.last_name;
+        if (body.firstName.length != 0 ) {
+            update.lastName = body.lastName;
         }
+        if (req.body.hasOwnProperty("contactNumber")) {
+            const oldNumber = await usersService.profile(body.contactNumber);
+            if (oldNumber.length == 0) {
+                update.contactNumber = body.contactNumber;
+            } else {
+                update.contactNumber = oldNumber.dataValues.contactNumber;
+            }
+        };
+        if (req.body.hasOwnProperty("email")) {
+            const oldEmail = await usersService.getUser(req.body.email);
+            if (oldEmail == null) {
+                update.email = req.body.email;
+            } else {
+                update.email = oldEmail.dataValues.email;
+            }
+        };
+        
+        await usersService.updateUsers(dbEmail.dataValues.email, update);
+        res.status(200).json(update);
+    } catch (error) {
+        res.status(403).json({
+            message: error + 'Server error occurred'
+        })
     }
-    if((req.body.hasOwnProperty("contact_num"))&&(req.body.hasOwnProperty("email"))){
-        const oldNumber = await usersService.profile(req.body.contact_num);
-        const oldEmail = await usersService.getUser(req.body.email);
-        console.log("old    = ",oldEmail.dataValues.email);
-        if(oldNumber.length == 0){
-            update.contact_num = req.body.contact_num;
-        }else{
-            update.contact_num = oldEmail.dataValues.contact_num ;
-        }
-        if(oldEmail == null){
-            update.email = req.body.email;
-        }else{
-            update.email = oldEmail.dataValues.email;
-        }
-    };
-    await usersService.updateUsers( dbEmail.dataValues.email , update );
-    res.status(200).json( update );
 };
 
 // change password
 exports.changePassword = async (req, res) => {
-    const email = req.user.email;
-    const oldPassword = req.body.password;
-    const newPassword = req.body.new_password;
-    const conPassword = req.body.confirm_password;
-    const update = {};
-    if(newPassword === conPassword){
-        
-        const user = await usersService.getUser(email);
-        
-        bcrypt.compare(oldPassword , user.password , async (err ,data) => {
-        if(err) throw err ;
-            
-        if(data){
-            console.log("hello");
-            const salt = await bcrypt.genSalt(10);
-            update.password = await bcrypt.hash(newPassword, salt);
-            await usersService.updateUsers( email , update );
-            res.status(200).json( {massage : "Your password is updated successfully" });
-            console.log("Your password is updated successfully in controller");
-        }else{
-            res.status(400).json( {massage : "Your password is incorrect" });
-            console.log("Your password is incorrect");
-        }
-    })
+    try {
+        const email = req.user.email;
+        const { oldPassword , newPassword , confirmPassword } = req.body;
+        const update = {};
+        if (newPassword === confirmPassword) {
+            const user = await usersService.getUser(email);
+            bcrypt.compare(oldPassword, user.password, async (err, data) => {
+                if (err) throw err;
 
-    } else{
-        console.log("password didn't match");
-    };
-
+                if (data) {
+                    const salt = await bcrypt.genSalt(10);
+                    update.password = await bcrypt.hash(newPassword, salt);
+                    await usersService.updateUsers(email, update);
+                    res.status(200).json({ Message: "Your password is updated successfully" });
+                } else {
+                    res.status(400).json({ Message: "Your password is incorrect" });
+                }
+            })
+        } else {
+            res.status(400).json({ Message: "Password didn't match" });
+        };
+    } catch (error) {
+        res.status(403).json({
+            message: error + 'Server error occurred'
+        })
+    }
 };
 
 // delete users
 exports.deleteUsers = async (req, res) => {
-    const email = req.query.email;
-    const users = await usersService.deleteUsers(email);
-    res.status(200).json({"Deleted is was":email});
-    console.log("deleted users id is in users controller  ==>>  " + email);
+    try {
+        const email = query.email;
+        await usersService.deleteUsers(email);
+        res.status(200).json({ "Deleted is was": email });
+    } catch (error) {
+        res.status(403).json({
+            message: error + 'Server error occurred'
+        })
+    }
 };
-
 
 // add admin
-exports.admin = async (req,res) => {
-    const values = ['ADMIN']
-    await addUser(req,res,values);
+exports.admin = async (req, res) => {
+    try {
+        const values = ['ADMIN']
+        await addUser(req, res, values);
+    } catch (error) {
+        res.status(403).json({
+            message: error + 'Server error occurred'
+        })
+    }
 };
 
 
+//  Add User or Admin Function 
+async function addUser(req, res, values) {
+    const data = req.body;
+    const matchRole = values.find(element => element == data.role);
+    const oldEmail = await usersService.getUser(data.email);
+    const oldNumber = await usersService.profile(data.contactNumber);
 
-
-
-
-
-
+    if ((!oldEmail) && (oldNumber.length == 0) && (data.role === matchRole)) {
+        if (data.password === data.confirmPassword) {
+            const salt = await bcrypt.genSalt(10);
+            data.password = await bcrypt.hash(data.password, salt);
+            const users = await usersService.addUsers(data);
+            const token = tokenJwt(users);
+            const usersData = { ...users.dataValues, token };
+            res.status(200).json(usersData);
+        } else {
+            res.status(401).json({ Message: "Invalid Confirm Password" });
+        }
+    } else {
+        res.status(401).json({ Message: "users Already exits" });
+    }
+    return;
+};
