@@ -1,6 +1,6 @@
 const express = require('express');
-const env = require('./.env')
-const router = require('./routes')
+const router = require('./routes');
+require('dotenv').config();
 
 const app = express();
 app.use(express.json());

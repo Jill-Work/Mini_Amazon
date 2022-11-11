@@ -1,7 +1,6 @@
 const model = require("../models/db");
 var Sequelize = require("sequelize");
 const Op = Sequelize.Op;
-require('dotenv').config({ path: './../.env' });
 
 // get product
 exports.getProduct = async (id) => {
@@ -11,41 +10,41 @@ exports.getProduct = async (id) => {
 
 // Search Product
 exports.getProductHistory = async (req, res) => {
-    console.log("Req Query", req.query.search);
+    const { search, filters, limit, offset } = req.query;
     let where = {};
-    if (req.query.search) {
+    if (search) {
         where = {
             [Op.or]: [
-                { productName: { [Op.like]: '%' + req.query.search + '%' } },
+                { productName: { [Op.like]: '%' + search + '%' } },
             ],
         }
 
     }
 
-    if (req.query.filters) {
-        if (req.query.filters.category) {
+    if (filters) {
+        if (filters.category) {
             where = {
                 ...where,
-                category: req.query.filters.category
+                category: filters.category
             }
         }
-        if (req.query.filters.brand) {
+        if (filters.brand) {
             where = {
                 ...where,
-                category: req.query.filters.brand
+                brand: filters.brand
             }
         }
-        if (req.query.filters.price) {
+        if (filters.price) {
             where = {
                 ...where,
-                category: req.query.filters.price
+                price: filters.price
             }
         }
-        console.log(req.query.filters);
+        console.log(filters);
     }
 
     console.log("where", where);
-    
+
     let condition = {
         where,
         order: [
@@ -53,11 +52,11 @@ exports.getProductHistory = async (req, res) => {
         ]
     };
 
-    if (req.query.limit && req.query.offset) {
+    if (limit && offset) {
         condition = {
             ...condition,
-            limit: parseInt(req.query.limit),
-            offset: parseInt(req.query.offset)
+            limit: parseInt(limit),
+            offset: parseInt(offset)
         }
     }
 
@@ -79,7 +78,8 @@ exports.addProduct = async (data) => {
 
 // update product
 exports.updateProduct = async (id, update) => {
-    return await model.product.update(update, { where: { id } });
+    const product = await model.product.update(update, { where: { id } });
+    return product;
 };
 
 
