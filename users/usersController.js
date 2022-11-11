@@ -95,7 +95,7 @@ exports.updateUsers = async (req, res) => {
         if(oldNumber.length == 0){
             update.contact_num = req.body.contact_num;
         }else{
-            update.contact_num = oldEmail.dataValues.contact_num;
+            update.contact_num = oldEmail.dataValues.contact_num ;
         }
         if(oldEmail == null){
             update.email = req.body.email;
