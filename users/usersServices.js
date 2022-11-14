@@ -1,37 +1,30 @@
-const { where , Op } = require('sequelize');
+const { where } = require('sequelize');
 const model = require("../models/db");
 
 
 //get user
 exports.getUser = async (email) => {
-    return await model.users.findOne({where:{email}})
+    return await model.users.findOne({where: {email} });
 }
 
-//get profile
-exports.profile = async (contact_num) => {
-    return await model.users.findAll({ 
-        where : {
-            [Op.or]:[
-                {contact_num}
-            ]} 
-        })
+//get getContactNumber
+exports.getContactNumber = async (contactNumber) => {
+    return await model.users.findAll({ where : {contactNumber} });
 };
 
 // get users
 exports.getUsers = async (condition) => {
-    return await model.users.findAll(condition)
+    return await model.users.findAll(condition);
 };
-
 
 // sign up users
 exports.addUsers = async (data) => {
     return await model.users.create(data);
 };
 
-
 // log in user
 exports.signUp = async (email) => {
-    return await model.users.findOne({where:{email}})
+    return await model.users.findOne({where:{email}});
 };
 
 // update users

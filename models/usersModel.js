@@ -2,10 +2,8 @@
 const express = require('express');
 const app = express();
 
- 
- 
+  
 // define model
-
 module.exports = (sequelize , DataTypes)=>{
     const users = sequelize.define('users', {
         id:{
@@ -16,13 +14,13 @@ module.exports = (sequelize , DataTypes)=>{
         role: {
             type:DataTypes.STRING(100)
           },
-        first_name:{
+        firstName:{
             type:DataTypes.STRING(100)
         },
-        last_name:{
+        lastName:{
             type:DataTypes.STRING(100)
         },
-        contact_num:{
+        contactNumber:{
             type:DataTypes.INTEGER(10)
         },
         email:{
@@ -33,6 +31,7 @@ module.exports = (sequelize , DataTypes)=>{
         },     
     },{
         timestamps:false,
+        underscored:true,
     })
     return users;
 };
