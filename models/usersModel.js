@@ -2,10 +2,8 @@
 const express = require('express');
 const app = express();
 
- 
- 
+  
 // define model
-
 module.exports = (sequelize , DataTypes)=>{
     const users = sequelize.define('users', {
         id:{

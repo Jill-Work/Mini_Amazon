@@ -90,7 +90,7 @@ exports.updateUsers = async (req, res) => {
             update.lastName = body.lastName;
         }
         if (req.body.hasOwnProperty("contactNumber")) {
-            const oldNumber = await usersService.profile(body.contactNumber);
+            const oldNumber = await usersService.getContactNumber(body.contactNumber);
             if (oldNumber.length == 0) {
                 update.contactNumber = body.contactNumber;
             } else {
@@ -150,7 +150,7 @@ exports.deleteUsers = async (req, res) => {
     try {
         const email = query.email;
         await usersService.deleteUsers(email);
-        res.status(200).json({ "Deleted is was": email });
+        res.status(200).json({ "Deleted account was": email });
     } catch (error) {
         res.status(403).json({
             message: error + 'Server error occurred'
@@ -176,7 +176,7 @@ async function addUser(req, res, values) {
     const data = req.body;
     const matchRole = values.find(element => element == data.role);
     const oldEmail = await usersService.getUser(data.email);
-    const oldNumber = await usersService.profile(data.contactNumber);
+    const oldNumber = await usersService.getContactNumber(data.contactNumber);
 
     if ((!oldEmail) && (oldNumber.length == 0) && (data.role === matchRole)) {
         if (data.password === data.confirmPassword) {

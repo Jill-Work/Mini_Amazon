@@ -1,8 +1,8 @@
 const express = require('express');
-const Joi = require('joi');
 const app = express();
-const jwt = require('jsonwebtoken');
 const model = require("../models/db");
+const Joi = require('joi');
+const jwt = require('jsonwebtoken');
 const string = require("string-sanitizer");
 
 exports.userAuth = (req, res, next) => {
@@ -55,9 +55,9 @@ exports.insertUsers = (req, res, next) => {
         incomingData.firstName = string.sanitize.removeNumber(incomingData.firstName);
         incomingData.lastName = string.sanitize.removeNumber(incomingData.lastName);
         // incomingData.email = string.validate.isEmail(incomingData.email)     //email validation
-        req.body.role = incomingData.role.toUpperCase();
-        req.body.firstName = incomingData.firstName.charAt(0).toUpperCase() + incomingData.firstName.slice(1);
-        req.body.lastName = incomingData.lastName.charAt(0).toUpperCase() + incomingData.lastName.slice(1);
+        incomingData.role = incomingData.role.toUpperCase();
+        incomingData.firstName = incomingData.firstName.charAt(0).toUpperCase() + incomingData.firstName.slice(1);
+        incomingData.lastName = incomingData.lastName.charAt(0).toUpperCase() + incomingData.lastName.slice(1);
         console.log("insert middleware check is done");
         next();
     }

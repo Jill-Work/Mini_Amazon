@@ -19,10 +19,6 @@ router.put("/changePassword", usersMiddleware.userAuth, usersController.changePa
 router.delete("/delete", usersMiddleware.userAuth,  usersController.deleteUsers);
 
 router.post("/adminSignup", usersMiddleware.insertUsers , usersController.admin);
-
-router.post("/test", async (req,res)=>{
-    res.send("test api")
-})  
  
 
 module.exports=router;
