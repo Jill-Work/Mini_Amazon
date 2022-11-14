@@ -1,31 +1,31 @@
 const { where } = require('sequelize');
 const model = require("../models/db");
 
-// get user
-exports.getUser = async (email) => {
-    // console.log("role == ",role);
-    return await model.users.findOne({
-        where:{email}
-    })
-};
 
+//get user
+exports.getUser = async (email) => {
+    return await model.users.findOne({where: {email} });
+}
+
+//get getContactNumber
+exports.getContactNumber = async (contactNumber) => {
+    return await model.users.findAll({ where : {contactNumber} });
+};
 
 // get users
-exports.getUsers = async () => {
-    return await model.users.findAll({})
+exports.getUsers = async (condition) => {
+    return await model.users.findAll(condition);
 };
-
 
 // sign up users
 exports.addUsers = async (data) => {
     return await model.users.create(data);
 };
 
-
 // log in user
 exports.signUp = async (email) => {
-    return await model.users.findOne({where:{email}})
-}
+    return await model.users.findOne({where:{email}});
+};
 
 // update users
 exports.updateUsers = async (email,update) => {

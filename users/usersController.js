@@ -1,120 +1,196 @@
 const usersService = require("./usersServices");
-const model = require('../models/db');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const env = require("../.env");
-const role = require("../models/role");
-const { date } = require("joi");
+const { tokenJwt } = require("../common/common");
 
-// get users
+// get user
 exports.getUser = async (req, res) => {
-    const email = req.query.email;
-    const users = await usersService.getUser(email)
-    res.send(users);
-    console.log("getUser in controller",users.dataValues);
+    try {
+        const { email } = req.query;
+        const users = await usersService.getUser(email)
+        console.log("users",users);
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(403).json({
+            message: error + 'Server error occurred'
+        })
+    }
 };
 
-
-// get userss
+// get users
 exports.getUsers = async (req, res) => {
-    const users = await usersService.getUsers();
-    res.send(users);
-    console.log("users in controller", users);
+    try {
+        const { query } = req.query;
+        let condition = {};
+        if (query.search) {
+            condition = {
+                where: { "email": query.search }
+            }
+        } else if (query.size && query.page) {
+            condition = {
+                limit: parseInt(query.size),
+                offset: parseInt(query.size) * parseInt((query.page - 1)),
+            }
+        }
+        const users = await usersService.getUsers(condition);
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(403).json({
+            message: error + 'Server error occurred'
+        })
+    }
 };
 
 //  Sign Up
 exports.signUp = async (req, res) => {
-    const values = ['BUYER','SELLER']
-    await addUser (req,res,values)
+    try {
+        const values = ['BUYER', 'SELLER']
+        await addUser(req, res, values)
+    } catch (error) {
+        res.status(403).json({
+            message: error + 'Server error occurred'
+        })
+    }
 };
-
 
 // log in
 exports.logIn = async (req, res) => {
-    const bodydata = req.body;
-    const password = bodydata.password;
-    const user = await usersService.getUser(bodydata.email);
-    const userPass = user.password;
-    bcrypt.compare(password, userPass, (err, data) => {
-        
-        if (err) throw err
+    try {
+        const { password , email } = req.body;
+        const users = await usersService.getUser(email);
+        const userPassword = users.password;
+        bcrypt.compare(password, userPassword, (err, data) => {
+            if (err) throw err
 
-        if (data) {
-            const token = jwt.sign({ "email": user }, SECRET_KEY);
-            console.log("token   ==>.  " + token);
-            res.status(200).json({ token });
-            console.log("log in in user controller  ==>>  " + JSON.stringify(user));
-
-        } else {
-            res.send("invalid details");
-            console.log("invalid details in student controller");
-        }
-    })
-}
-
+            if (data) {
+                const token = tokenJwt(users);
+                res.status(200).json({ token });
+            } else {
+                res.status(404).json({ error: "invalid details" });
+            }
+        })
+    } catch (error) {
+        res.status(403).json({
+            message: error + 'Server error occurred'
+        })
+    }
+};
 
 // update users
 exports.updateUsers = async (req, res) => {
-    const email = req.query.email;
-    const update = {
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
-        email: req.body.email,
-        contact_num: req.body.contact_num,
-        password: req.body.password,
+    try {
+        const email = req.user.email;
+        const body = req.body;
+        const userDbEmail = await usersService.getUser(email);
+        let update = {};
+        if (body.firstName.length != 0 ) {
+            update.firstName = body.firstName;
+        }
+        if (body.firstName.length != 0 ) {
+            update.lastName = body.lastName;
+        }
+        if (req.body.hasOwnProperty("contactNumber")) {
+            const oldNumber = await usersService.getContactNumber(body.contactNumber);
+            if (oldNumber.length == 0) {
+                update.contactNumber = body.contactNumber;
+            } else {
+                update.contactNumber = oldNumber.dataValues.contactNumber;
+            }
+        };
+        if (req.body.hasOwnProperty("email")) {
+            const oldEmail = await usersService.getUser(req.body.email);
+            if (oldEmail == null) {
+                update.email = req.body.email;
+            } else {
+                update.email = oldEmail.dataValues.email;
+            }
+        };
+        
+        await usersService.updateUsers(userDbEmail.dataValues.email, update);
+        res.status(200).json(update);
+    } catch (error) {
+        res.status(403).json({
+            message: error + 'Server error occurred'
+        })
     }
-    const users = await usersService.updateUsers(email, update);
-    res.send({ ...users, update });
-    console.log("update in users controller", users, update);
+};
+
+// change password
+exports.changePassword = async (req, res) => {
+    try {
+        const email = req.user.email;
+        const { oldPassword , newPassword , confirmPassword } = req.body;
+        const update = {};
+        if (newPassword === confirmPassword) {
+            const user = await usersService.getUser(email);
+            bcrypt.compare(oldPassword, user.password, async (err, data) => {
+                if (err) throw err;
+
+                if (data) {
+                    const salt = await bcrypt.genSalt(10);
+                    update.password = await bcrypt.hash(newPassword, salt);
+                    await usersService.updateUsers(email, update);
+                    res.status(200).json({ Message: "Your password is updated successfully" });
+                } else {
+                    res.status(400).json({ Message: "Your password is incorrect" });
+                }
+            })
+        } else {
+            res.status(400).json({ Message: "Password didn't match" });
+        };
+    } catch (error) {
+        res.status(403).json({
+            message: error + 'Server error occurred'
+        })
+    }
 };
 
 // delete users
 exports.deleteUsers = async (req, res) => {
-    const email = req.query.email;
-    const users = await usersService.deleteUsers(email);
-    res.send("deleted is was = " + email);
-    console.log("deleted users id is in users controller  ==>>  " + email);
+    try {
+        const email = query.email;
+        await usersService.deleteUsers(email);
+        res.status(200).json({ "Deleted account was": email });
+    } catch (error) {
+        res.status(403).json({
+            message: error + 'Server error occurred'
+        })
+    }
 };
 
-exports.admin = async (req,res) => {
-    const values = ['ADMIN']
-    await addUser(req,res,values)
+// add admin
+exports.admin = async (req, res) => {
+    try {
+        const values = ['ADMIN']
+        await addUser(req, res, values);
+    } catch (error) {
+        res.status(403).json({
+            message: error + 'Server error occurred'
+        })
+    }
 };
 
 
-
-
-async function addUser(req,res,values) {    
+//  Add User or Admin Function 
+async function addUser(req, res, values) {
     const data = req.body;
-    console.log("data",data);
-    
-    const match = values.find(element => element == data.role);
-    console.log("match",match);
-    
-    const oldusers = await usersService.getUser(data.email);
+    const matchRole = values.find(element => element == data.role);
+    const oldEmail = await usersService.getUser(data.email);
+    const oldNumber = await usersService.getContactNumber(data.contactNumber);
 
-    if ((!oldusers)&&(data.role === match)) {
-        
-        var password = data.password;
-        const token = jwt.sign({ "email": data }, SECRET_KEY);
-        const salt = await bcrypt.genSalt(10);
-        password = await bcrypt.hash(password, salt);
-        
-        if (data.password === data.conpassword) {
-            data.password = password;
+    if ((!oldEmail) && (oldNumber.length == 0) && (data.role === matchRole)) {
+        if (data.password === data.confirmPassword) {
+            const salt = await bcrypt.genSalt(10);
+            data.password = await bcrypt.hash(data.password, salt);
             const users = await usersService.addUsers(data);
-            const usersData = { ...users.dataValues, token }
-            res.send(usersData)
-            console.log("create users is in users controller  ==>>  " + JSON.stringify(usersData));
+            const token = tokenJwt(users);
+            const usersData = { ...users.dataValues, token };
+            res.status(200).json(usersData);
         } else {
-            res.send("invalid confirm password");
-            console.log("invalid confirm password in users controller");
+            res.status(401).json({ Message: "Invalid Confirm Password" });
         }
+    } else {
+        res.status(401).json({ Message: "users Already exits" });
     }
-
-    else {
-        console.log("users Already exits");
-        res.send("users Already exits");
-    }
-
+    return;
 };

@@ -15,11 +15,10 @@ db.sequelize = sequelize;
 
 //      connecting db to model
 db.product = require("./productModel")(sequelize , DataTypes);
-
 db.users = require("./usersModel")(sequelize , DataTypes);
-db.role = require("./role")(sequelize , DataTypes)
-db.routeauth = require("./routeModel")(sequelize , DataTypes);
 db.cart = require("./cartModel")(sequelize, DataTypes);
+db.role = require("./role")(sequelize , DataTypes);
+db.routeAuth = require("./routeModel")(sequelize , DataTypes);
 
 //      sync db
 // db.sequelize.sync({force:true})
