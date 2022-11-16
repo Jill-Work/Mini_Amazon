@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const productController = require("../products/productController")
+const userController = require("../middleware/usersMiddleware");
+const productController = require("../products/productController");
 const productMiddleware = require("../middleware/productMiddleware");
 
 router.get("/", productController.getProduct);
 
-router.post("/", productMiddleware.insertProduct, productController.addProduct);
+router.post("/addProduct" , userController.userAuth , productMiddleware.insertProduct, productController.addProduct);
 
 router.put("/:id", productController.updateProduct);
 

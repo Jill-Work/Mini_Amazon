@@ -1,5 +1,6 @@
 //      sequelize import
 const {Sequelize , DataTypes, Model}  = require('sequelize'); 
+const usersModel = require('./usersModel');
 
 //      passing database = = db name , username , password , host  , dialect
 const sequelize = new Sequelize('mini_amazon', 'root', '', {
@@ -17,8 +18,13 @@ db.sequelize = sequelize;
 db.product = require("./productModel")(sequelize , DataTypes);
 db.users = require("./usersModel")(sequelize , DataTypes);
 db.cart = require("./cartModel")(sequelize, DataTypes);
-db.role = require("./role")(sequelize , DataTypes);
 db.routeAuth = require("./routeModel")(sequelize , DataTypes);
+
+//      Relationship
+db.product.belongsTo(db.users, {foreignKey: 'seller_id'});
+// db.users.hasOne(db.product ,{primaryKey: 'id'});
+db.cart.belongsTo(db.product,{foreignKey:'product_id'});
+// db.users.hasOne(db.cart);
 
 //      sync db
 // db.sequelize.sync({force:true})

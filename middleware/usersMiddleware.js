@@ -4,6 +4,8 @@ const model = require("../models/db");
 const Joi = require('joi');
 const jwt = require('jsonwebtoken');
 const string = require("string-sanitizer");
+const { where, Op } = require('sequelize');
+
 
 exports.userAuth = (req, res, next) => {
     const authorization = req.headers['authorization'];
@@ -17,19 +19,23 @@ exports.userAuth = (req, res, next) => {
             })
         } else {
             const routes = req.path;
-            const incomingData = user.role;
-            const dbAuth = await model.routeAuth.findOne({ where: { "role": incomingData, routes } })
-            const dbData = dbAuth.dataValues.role
-            if ((dbData == incomingData) || (incomingData == "ADMIN")) {
-                console.log("auth middleware check is done");
-                req.user = user
-                next();
+            const role = user.role;
+            const dbAuth = await model.routeAuth.findOne({ where: { role, routes } });
+            if (dbAuth) {
+                const dbRole = dbAuth.dataValues.role
+                if ((dbRole == role) || (role == "ADMIN")) {
+                    console.log("auth middleware check is done");
+                    req.user = user
+                    next();
+                }
             } else {
                 res.status(403).json({
                     'error': 'you are not authorize to this page'
                 })
                 return;
             }
+
+
         }
     })
 };
@@ -85,8 +91,8 @@ exports.logIn = (req, res, next) => {
 
     if (error) {
         return res.status(400).json({ "error": error.message })
-    } else { 
+    } else {
         console.log("middleware check is done");
-        next(); 
+        next();
     }
 };

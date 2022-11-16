@@ -13,10 +13,12 @@ const { Sequelize } = require('./db');
             autoIncrement: true,
             primaryKey: true
         },
-        productName: {
-            type:DataTypes.STRING(100)
+        sellerId:{
+            type:DataTypes.INTEGER,
+            model: 'user',
+            key: 'id'
         },
-        seller_id: {
+        productName: {
             type:DataTypes.STRING(100)
         },
         image: {
@@ -33,10 +35,14 @@ const { Sequelize } = require('./db');
             type:DataTypes.STRING(100)
         },
         price : {
-            type:DataTypes.INTEGER(10)
+            type:DataTypes.INTEGER,
+        },
+        stock: {
+            type:DataTypes.INTEGER,
         }
     },{
         timestamps:false,
+        underscored:true,
     })
     return product;
 };

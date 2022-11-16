@@ -22,3 +22,5 @@ exports.insertProduct = (req, res, next) => {
         next();
     }
   };
+
+

@@ -13,17 +13,33 @@ const { Sequelize } = require('./db');
             autoIncrement: true,
             primaryKey: true
         },
-        items: {
-            type:DataTypes.STRING(100)
+        buyerId:{
+            type:DataTypes.INTEGER,
+            model: 'user',
+            key: 'id'
         },
-        totalItems: {
-            type:DataTypes.STRING(100)
+        sellerId:{
+            type:DataTypes.INTEGER,
+            model: 'user',
+            key: 'id'
         },
-        totalPrice: {
-            type: DataTypes.STRING(100)
+        productId: {
+            type:DataTypes.INTEGER,
+            model: 'product',
+            key: 'id'
+        },
+        price: {
+            type:DataTypes.INTEGER,
+        },
+        quantity: {
+            type:DataTypes.INTEGER,
+        },
+        total:{
+            type:DataTypes.INTEGER,
         }
     },{
         timestamps:false,
+        underscored:true,
     })
     return cart;
 };
