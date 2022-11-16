@@ -4,7 +4,7 @@ const productService = require("./productService");
 exports.getProduct = async (req,res) => { 
     try {
         const {id} = req.query;
-        const product = await productService.getProduct(id);
+        const product = await productService.getOneProduct(id);
         res.send(product);        
     } catch (error) {
         res.status(403).json({
@@ -13,12 +13,21 @@ exports.getProduct = async (req,res) => {
     }
 };
 
-// insert Product
+// add Product
 exports.addProduct = async (req,res) => {
     try {
         const data = req.body;
-        const product = await productService.addProduct(data);
-        res.send(product);  
+        data.sellerId = req.user.id;
+        console.log(data);
+        const isProductExist = await productService.checkIfExits(data);
+        if(isProductExist == null){
+            const product = await productService.addProduct(data);
+            res.status(403).json(product)
+        } else {
+            res.status(403).json({
+                message: 'Product Already Exits'
+            })
+        }
     } catch (error) {
         res.status(403).json({
             message: 'Server error occurRed'
@@ -30,7 +39,6 @@ exports.addProduct = async (req,res) => {
 exports.updateProduct = async (req,res) => {
     try {
         const id = req.params.id;
-        console.log(id);
         const isProductExist = await productService.getProduct(id);
         if(isProductExist) {
             const update = {
@@ -59,7 +67,7 @@ exports.deleteProduct = async (req,res) => {
         const isProductExist = await productService.getProduct(id);
         if(isProductExist) {
             const product = await productService.deleteProduct(id);
-            res.send("deleted is was = " + id);  
+            res.send("deleted id was = " + id);  
         } else {
             res.status(403).json({
                 message: 'Product already deleted!'

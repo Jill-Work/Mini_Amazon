@@ -9,10 +9,10 @@ module.exports = (sequelize , DataTypes)=>{
             primaryKey: true
         },
         role:{
-            type:DataTypes.STRING(10)
+            type:DataTypes.STRING(20)
         },
         routes:{
-            type:DataTypes.STRING(10)
+            type:DataTypes.STRING(20)
         }    
     },{
         timestamps:false,
