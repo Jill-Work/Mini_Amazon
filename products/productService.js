@@ -142,7 +142,3 @@ exports.deleteProduct = async (id) => {
     return await model.product.destroy({ where: { id } });
 };
 
-
-// ,
-// { category: data.category }
-// { price: data.price }{productName:data.productName},

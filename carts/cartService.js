@@ -2,11 +2,6 @@ const model = require("../models/db");
 const { where, Op } = require('sequelize');
 
 
-// get cart
-exports.getCart = async (id) => {
-    return await model.cart.findAll(id)
-};
-
 // get cart all product
 exports.getCartAllProduct = async (id) => {
     return await model.cart.findAll({ where: { buyer_id: id } });
