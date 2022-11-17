@@ -19,14 +19,13 @@ exports.getCartAllProduct = async (id) => {
     return data;
 }
 
-// add and update to cart
-exports.addAndUpdateToCart = async (cartData, buyerId, productId, quantity) => {
-    const foundItem = await model.cart.findOne({ where: { buyerId, productId } });
-    if (!foundItem) {
-        return await model.cart.create(cartData);
-    } else {
-        return await model.cart.update({ quantity }, { where: { buyerId, productId } })
-    }
+// add to cart
+exports.addToCart = async (data) => {
+    return await model.cart.create(data);
+};
+// update cart
+exports.updateToCart = async(id, quantity) => {
+    return await model.cart.update({quantity},{where:{id}})
 };
 
 // delete cart
