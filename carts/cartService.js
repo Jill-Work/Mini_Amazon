@@ -26,8 +26,9 @@ exports.addAndUpdateToCart = async (cartData, buyerId, productId, quantity) => {
 exports.deleteFromCart = async (buyerId, productId) => {
     return await model.cart.destroy({
         where: {
-            [Op.and]: [{ buyerId },
-            { productId }
+            [Op.and]: [
+                { buyerId },
+                { productId }
             ]
         }
     });
