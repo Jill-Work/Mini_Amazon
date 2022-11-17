@@ -31,15 +31,6 @@ exports.addAndUpdateToCart = async (req, res) => {
     }
 };
 
-<<<<<<< HEAD
-//  update to cart
-exports.updateToCart = async (req, res) => {
-    const data = await cartService.updateToCart(parseInt(req.query.productId), parseInt(req.query.quantity));
-    res.status(200).json(data);
-};
-
-=======
->>>>>>> e31aaba3617be781ddb310fae4261b0b42aad1f8
 //  delete to cart
 exports.deleteFromCart = async (req, res) => {
     const buyerId = req.user.id;

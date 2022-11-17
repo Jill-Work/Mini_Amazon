@@ -52,7 +52,6 @@ exports.updateProduct = async (req,res) => {
                 message: 'Product Not Found!'
             })    
         }
-        
     } catch (error) {
         res.status(403).json({
             message: `You can't update the product because Product not exist in the product list`
@@ -95,4 +94,4 @@ exports.productHistory = async (req, res) => {
             message: 'Server error occurred'
         })
     }
-}
+};
