@@ -23,8 +23,8 @@ exports.addToCart = async (data) => {
     return await model.cart.create(data);
 };
 // update cart
-exports.updateToCart = async(id, quantity) => {
-    return await model.cart.update({quantity},{where:{id}})
+exports.updateToCart = async(productId, quantity) => {
+    return await model.cart.update({quantity},{where:{productId}})
 };
 
 // delete cart

@@ -38,7 +38,7 @@ exports.addToCart = async (req, res) => {
 
 //  update to cart
 exports.updateToCart = async (req, res) => {
-    const data = await cartService.updateToCart(parseInt(req.query.cartId), parseInt(req.query.quantity));
+    const data = await cartService.updateToCart(parseInt(req.query.productId), parseInt(req.query.quantity));
     res.status(200).json(data);
 };
 
