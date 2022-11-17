@@ -9,31 +9,26 @@ exports.getCart = async (id) => {
 
 // get cart all product
 exports.getCartAllProduct = async (id) => {
-    console.log(id);
-    const data = await model.cart.findAll({
-        where: {
-            buyer_id: 2
-        }
-    })
-
-    return data;
+    return await model.cart.findAll({ where: { buyer_id: id } });
 }
 
-// add to cart
-exports.addToCart = async (data) => {
-    return await model.cart.create(data);
-};
-// update cart
-exports.updateToCart = async(id, quantity) => {
-    return await model.cart.update({quantity},{where:{id}})
+// add and update to cart
+exports.addAndUpdateToCart = async (cartData, buyerId, productId, quantity) => {
+    const foundItem = await model.cart.findOne({ where: { buyerId, productId } });
+    if (!foundItem) {
+        return await model.cart.create(cartData);
+    } else {
+        return await model.cart.update({ quantity }, { where: { buyerId, productId } })
+    }
 };
 
 // delete cart
-exports.deleteFromCart = async (buyerId , productId) => {
-    return await model.cart.destroy({ where: {
-        [Op.and]: [
-            { buyerId },
-            { productId}
-        ]
-    } });
+exports.deleteFromCart = async (buyerId, productId) => {
+    return await model.cart.destroy({
+        where: {
+            [Op.and]: [
+                { buyerId },
+                { productId }
+            ]}
+    });
 };
