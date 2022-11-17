@@ -29,7 +29,6 @@ exports.deleteFromCart = async (buyerId, productId) => {
             [Op.and]: [
                 { buyerId },
                 { productId }
-            ]
-        }
+            ]}
     });
 };
