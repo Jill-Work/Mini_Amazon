@@ -5,15 +5,13 @@ const productService = require("../products/productService");
 //  get cart
 exports.getCartAllProduct = async (req, res) => {
     const cart = await cartService.getCartAllProduct(req.user.id);
-    console.log(cart);
-    res.send(cart);
+    res.status(200).json(data);
 };
 
 //  add to cart
 exports.addAndUpdateToCart = async (req, res) => {
     const { productId, quantity } = req.query;
     const buyerId = req.user.id
-
     const getProduct = await productService.getOneProduct(productId);
     if (getProduct != null) {
         const cartData = {
