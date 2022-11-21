@@ -1,12 +1,4 @@
- // require module
- const express = require('express');
-const { Sequelize } = require('./db');
-
- const app = express();
-
- // define model
-
- module.exports = (sequelize , DataTypes)=>{
+module.exports = (sequelize , DataTypes)=>{
     const cart = sequelize.define('carts', {
         id:{
             type:DataTypes.INTEGER,
@@ -15,17 +7,17 @@ const { Sequelize } = require('./db');
         },
         buyerId:{
             type:DataTypes.INTEGER,
-            model: 'user',
+            model: 'users',
             key: 'id'
         },
         sellerId:{
             type:DataTypes.INTEGER,
-            model: 'user',
+            model: 'users',
             key: 'id'
         },
         productId: {
             type:DataTypes.INTEGER,
-            model: 'product',
+            model: 'products',
             key: 'id'
         },
         price: {

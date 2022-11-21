@@ -1,5 +1,5 @@
 const model = require("../models/db");
-const { where, Op } = require('sequelize');
+const { Op } = require('sequelize');
 
 
 // get cart all product
@@ -13,7 +13,7 @@ exports.addAndUpdateToCart = async (cartData, buyerId, productId, quantity) => {
     if (!foundItem) {
         return await model.cart.create(cartData);
     } else {
-        return await model.cart.update({ quantity }, { where: { buyerId, productId } })
+        return await model.cart.update({ quantity }, { where: { buyerId, productId } });
     }
 };
 

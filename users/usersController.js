@@ -1,20 +1,18 @@
 const usersService = require("./usersServices");
 const bcrypt = require('bcrypt');
-const env = require("../.env");
-const { tokenJwt } = require("../common/common");
-const { query } = require("express");
+const { tokenJwt } = require("../common/jwtToken");
+const { Op } = require('sequelize');
 
 // get user
 exports.getUser = async (req, res) => {
     try {
-        const { email } = req.query;
-        const users = await usersService.getUser(email)
-        console.log("users",users);
+        const { id } = req.params;
+        const users = await usersService.getUser({ where: { id } });
         res.status(200).json(users);
     } catch (error) {
         res.status(403).json({
             message: error + 'Server error occurred'
-        })
+        });
     }
 };
 
@@ -26,19 +24,19 @@ exports.getUsers = async (req, res) => {
         if (query.search) {
             condition = {
                 where: { "email": query.search }
-            }
+            };
         } else if (query.size && query.page) {
             condition = {
                 limit: parseInt(query.size),
                 offset: parseInt(query.size) * parseInt((query.page - 1)),
-            }
+            };
         }
         const users = await usersService.getUsers(condition);
         res.status(200).json(users);
     } catch (error) {
         res.status(403).json({
             message: error + 'Server error occurred'
-        })
+        });
     }
 };
 
@@ -50,31 +48,35 @@ exports.signUp = async (req, res) => {
     } catch (error) {
         res.status(403).json({
             message: error + 'Server error occurred'
-        })
+        });
     }
 };
 
 // log in
 exports.logIn = async (req, res) => {
     try {
-        const { password , email } = req.body;
-        const users = await usersService.getUser(email);
+        const { password, email, role } = req.body;
+        const users = await usersService.getUser({ where: { email } });
+        const userData = {
+            firstName : users.firstName,
+            lastName : users.lastName
+        }
         if (users) {
             const userPassword = users.password;
             const passwordCompare = await bcrypt.compare(password, userPassword);
             if (passwordCompare) {
                 const token = tokenJwt(users);
-                res.status(200).json({ token });
+                res.status(200).json( { ...userData , token });
             } else {
                 res.status(404).json({ error: "invalid details" });
             }
-        } else{
+        } else {
             res.status(404).json({ error: "invalid details" });
         }
     } catch (error) {
         res.status(403).json({
             message: error + 'Server error occurred'
-        })
+        });
     }
 };
 
@@ -83,16 +85,16 @@ exports.updateUsers = async (req, res) => {
     try {
         const email = req.user.email;
         const body = req.body;
-        const userDbEmail = await usersService.getUser(email);
+        const userDbEmail = await usersService.getUser({ where: { email } });
         let update = {};
-        if (body.firstName.length != 0 ) {
+        if (body.firstName.length != 0) {
             update.firstName = body.firstName;
         }
-        if (body.firstName.length != 0 ) {
+        if (body.lastName.length != 0) {
             update.lastName = body.lastName;
         }
         if (req.body.hasOwnProperty("contactNumber")) {
-            const oldNumber = await usersService.getContactNumber(body.contactNumber);
+            const oldNumber = await usersService.getUsers({ where: { contactNumber: body.contactNumber } });
             if (oldNumber.length == 0) {
                 update.contactNumber = body.contactNumber;
             } else {
@@ -100,14 +102,14 @@ exports.updateUsers = async (req, res) => {
             }
         };
         if (req.body.hasOwnProperty("email")) {
-            const oldEmail = await usersService.getUser(req.body.email);
+            const oldEmail = await usersService.getUser({ where: { email: req.body.email } });
             if (oldEmail == null) {
                 update.email = req.body.email;
             } else {
                 update.email = oldEmail.email;
             }
         };
-        
+
         await usersService.updateUsers(userDbEmail.email, update);
         res.status(200).json(update);
     } catch (error) {
@@ -121,10 +123,10 @@ exports.updateUsers = async (req, res) => {
 exports.changePassword = async (req, res) => {
     try {
         const email = req.user.email;
-        const { oldPassword , newPassword , confirmPassword } = req.body;
+        const { oldPassword, newPassword, confirmPassword } = req.body;
         const update = {};
         if (newPassword === confirmPassword) {
-            const user = await usersService.getUser(email);
+            const user = await usersService.getUser({ where: { email } });
             bcrypt.compare(oldPassword, user.password, async (err, data) => {
                 if (err) throw err;
 
@@ -136,14 +138,14 @@ exports.changePassword = async (req, res) => {
                 } else {
                     res.status(400).json({ Message: "Your password is incorrect" });
                 }
-            })
+            });
         } else {
             res.status(400).json({ Message: "Password didn't match" });
         };
     } catch (error) {
         res.status(403).json({
             message: error + 'Server error occurred'
-        })
+        });
     }
 };
 
@@ -156,19 +158,19 @@ exports.deleteUsers = async (req, res) => {
     } catch (error) {
         res.status(403).json({
             message: error + 'Server error occurred'
-        })
+        });
     }
 };
 
 // add admin
 exports.admin = async (req, res) => {
     try {
-        const values = ['ADMIN']
+        const values = ['ADMIN'];
         await addUser(req, res, values);
     } catch (error) {
         res.status(403).json({
             message: error + 'Server error occurred'
-        })
+        });
     }
 };
 
@@ -177,11 +179,17 @@ exports.admin = async (req, res) => {
 async function addUser(req, res, values) {
     const data = req.body;
     const matchRole = values.find(element => element == data.role);
-    const oldEmail = await usersService.getUser(data.email);
-    const oldNumber = await usersService.getContactNumber(data.contactNumber);
-    console.log("controller",oldNumber);
+    const existingUser = await usersService.getUser({
+        where: {
+            [Op.or]: [
+                { email: data.email },
+                { contactNumber: data.contactNumber }
+            ]
+        }
+    });
+    console.log("controller", existingUser);
 
-    if ((oldEmail == null) && (oldNumber.length == 0) && (data.role === matchRole)) {
+    if ((existingUser == null) && (data.role === matchRole)) {
         if (data.password === data.confirmPassword) {
             const salt = await bcrypt.genSalt(10);
             data.password = await bcrypt.hash(data.password, salt);
