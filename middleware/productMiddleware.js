@@ -17,7 +17,7 @@ exports.insertProduct = (req, res, next) => {
             {
                 "error": error.message
             }
-        )
+        );
     } else {
         next();
     }

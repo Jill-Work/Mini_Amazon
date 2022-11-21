@@ -9,7 +9,7 @@ exports.getProduct = async (req,res) => {
     } catch (error) {
         res.status(403).json({
             message: 'Product Not Found!'
-        })
+        });
     }
 };
 
@@ -26,12 +26,12 @@ exports.addProduct = async (req,res) => {
         } else {
             res.status(403).json({
                 message: 'Product Already Exits'
-            })
+            });
         }
     } catch (error) {
         res.status(403).json({
             message: 'Server error occurRed'
-        })
+        });
     } 
 };
 
@@ -43,19 +43,19 @@ exports.updateProduct = async (req,res) => {
         if(isProductExist) {
             const update = {
                 productName: req.body.productName
-            }
+            };
             const product = await productService.updateProduct(id,update);
             console.log(product);
             res.send(product);
         }else {
             res.status(403).json({
                 message: 'Product Not Found!'
-            })    
+            }); 
         }
     } catch (error) {
         res.status(403).json({
             message: `You can't update the product because Product not exist in the product list`
-        })
+        });
     } 
  };
 
@@ -70,12 +70,12 @@ exports.deleteProduct = async (req,res) => {
         } else {
             res.status(403).json({
                 message: 'Product already deleted!'
-            })            
+            });            
         }      
     } catch (error) {
         res.status(403).json({
             message: 'Product Not Found!'
-        })
+        });
     } 
 };
 
@@ -87,11 +87,11 @@ exports.productHistory = async (req, res) => {
             res.status(200).json({
                 message: result.productsHistory,
                 count: result.count
-            })   
+            });   
         } 
     } catch (err) {
         res.status(403).json({
             message: 'Server error occurred'
-        })
+        });
     }
 };

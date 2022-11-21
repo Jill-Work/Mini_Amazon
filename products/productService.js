@@ -1,6 +1,5 @@
 const model = require("../models/db");
 var Sequelize = require("sequelize");
-const { where } = require("sequelize");
 const Op = Sequelize.Op;
 
 // get product
@@ -57,7 +56,7 @@ exports.checkIfExits = async (data) => {
 };
 
 exports.updateStock = async (id,stock) => {
-    return await model.product.update({stock},{where:{id}})
+    return await model.product.update({stock},{where:{id}});
 }
 //jill -------
 

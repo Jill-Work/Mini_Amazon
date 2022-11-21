@@ -1,12 +1,4 @@
- // require module
- const express = require('express');
-const { Sequelize } = require('./db');
-
- const app = express();
-
- // define model
-
- module.exports = (sequelize , DataTypes)=>{
+module.exports = (sequelize , DataTypes)=>{
     const product = sequelize.define('products', {
         id:{
             type:DataTypes.INTEGER,

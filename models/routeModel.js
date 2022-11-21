@@ -1,6 +1,3 @@
-const express = require('express');
-const app = express();
-
 module.exports = (sequelize , DataTypes)=>{
     const users = sequelize.define('routes', {
         id:{

@@ -4,7 +4,7 @@ const orderController = require("./orderController");
 const usersMiddleware = require("../middleware/usersMiddleware");
 
 
-router.get("/getOrder", usersMiddleware.userAuth, orderController.getOrder)
+router.get("/getOrder", usersMiddleware.userAuth, orderController.getOrder);
 
 router.post("/createOrder", usersMiddleware.userAuth, orderController.createOrder);
 

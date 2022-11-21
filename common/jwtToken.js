@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
-const env = require("../.env")
-require('dotenv').config();
+const env = require("../.env");
 
 
 // jwt token
@@ -11,9 +10,9 @@ function tokenJwt(users) {
         firstName: users.firstName,
         lastName: users.lastName,
         email: users.email,
-    }
+    };
     const token = jwt.sign(tokenData, SECRET_KEY);
     return token;
 };
 
-module.exports = { tokenJwt }
+module.exports = { tokenJwt };
