@@ -5,7 +5,7 @@ const productService = require("../products/productService");
 //  get cart
 exports.getCartAllProduct = async (req, res) => {
     const cart = await cartService.getCartAllProduct(req.user.id);
-    res.status(200).json(data);
+    res.status(200).json(cart);
 };
 
 //  add to cart

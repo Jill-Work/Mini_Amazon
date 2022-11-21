@@ -19,12 +19,18 @@ db.product = require("./productModel")(sequelize , DataTypes);
 db.users = require("./usersModel")(sequelize , DataTypes);
 db.cart = require("./cartModel")(sequelize, DataTypes);
 db.routeAuth = require("./routeModel")(sequelize , DataTypes);
+db.order = require("./orderModel")(sequelize , DataTypes);
+db.order_product = require("./order_productModels")(sequelize , DataTypes);
 
 //      Relationship
 db.product.belongsTo(db.users, {foreignKey: 'seller_id'});
-// db.users.hasOne(db.product ,{primaryKey: 'id'});
 db.cart.belongsTo(db.product,{foreignKey:'product_id'});
-// db.users.hasOne(db.cart);
+db.order.belongsTo(db.users, {foreignKey:'buyer_id'});
+db.order_product.belongsTo(db.order, {foreignKey:'order_id'});
+db.order_product.belongsTo(db.users, {foreignKey:'seller_id'});
+db.order_product.belongsTo(db.product, {foreignKey:'product_id'});
+
+
 
 //      sync db
 // db.sequelize.sync({force:true})
