@@ -1,7 +1,7 @@
 const env = require("../.env")
 
 //      sequelize import
-const { Sequelize, DataTypes, Model } = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
 
 //      passing database = = db name , username , password , host  , dialect
 const sequelize = new Sequelize( DB_NAME, ROOT, PASSWORD, {

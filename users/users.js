@@ -7,9 +7,9 @@ const logIn = require("../requests/logInRequest");
 const update = require("../requests/updateRequest")
 
 // 
-router.get("/get/:id", usersMiddleware.userAuth, usersController.getUser);
+router.get("/user/:id", usersMiddleware.userAuth, usersController.getUser);
 
-router.get("/gets", usersMiddleware.userAuth, usersController.getUsers);
+router.get("/list", usersMiddleware.userAuth, usersController.getUsers);
 
 router.post("/signup", insertUsers.insertUsers, usersController.signUp);
 
