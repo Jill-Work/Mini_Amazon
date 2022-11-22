@@ -30,8 +30,7 @@ exports.createOrder = async (req, res) => {
             price: getProduct.price,
             total: cart[i].quantity * getProduct.price
         };
-        console.log(orderProduct);
-        const confirmOrder = await orderService.createOrderProduct(orderProduct);
-        const deleteFromCart = await cartService.deleteFromCart(req.user.id,cart[i].productId);
+        await orderService.createOrderProduct(orderProduct);
+        await cartService.deleteFromCart(req.user.id,cart[i].productId);
     }
 };
