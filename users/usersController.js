@@ -6,8 +6,12 @@ const { Op } = require('sequelize');
 // get user
 exports.getUser = async (req, res) => {
     try {
+        console.log(req.originalUrl);
         const { id } = req.params;
-        const users = await usersService.getUser({ where: { id } });
+        const users = await usersService.getUser({ 
+            where: { id },
+            attributes: {exclude: ['password']},
+             });
         res.status(200).json(users);
     } catch (error) {
         res.status(403).json({
@@ -58,8 +62,9 @@ exports.logIn = async (req, res) => {
         const { password, email, role } = req.body;
         const users = await usersService.getUser({ where: { email } });
         const userData = {
+            role : users.role,
             firstName : users.firstName,
-            lastName : users.lastName
+            lastName : users.lastName,
         }
         if (users) {
             const userPassword = users.password;

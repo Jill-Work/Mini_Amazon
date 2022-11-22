@@ -15,6 +15,9 @@ module.exports = (sequelize , DataTypes)=>{
         },
         contactNumber: {
             type:DataTypes.INTEGER
+        },
+        total:{
+            type:DataTypes.INTEGER,
         }
     },{
         timestamps:false,

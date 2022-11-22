@@ -1,5 +1,6 @@
 const model = require("../models/db");
 const jwt = require('jsonwebtoken');
+const { Op } = require('sequelize');
 
 
 exports.userAuth = (req, res, next) => {
@@ -13,9 +14,11 @@ exports.userAuth = (req, res, next) => {
                 error: err.message
             });
         } else {
-            const routes = req.path;
+            const routes = req.baseUrl;
+            console.log(routes);
             const role = user.role;
             const dbAuth = await model.routeAuth.findOne({ where: { role, routes } });
+            console.log(dbAuth);
             if (dbAuth) {
                 const dbRole = dbAuth.dataValues.role;
                 if ((dbRole == role) || (role == "ADMIN")) {
