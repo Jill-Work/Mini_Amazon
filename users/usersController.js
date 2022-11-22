@@ -184,6 +184,10 @@ exports.admin = async (req, res) => {
 async function addUser(req, res, values) {
     const data = req.body;
     const matchRole = values.find(element => element == data.role);
+    if (!matchRole) {
+        return res.status(401).json({ Message: "You are authorize to this page" });
+    }
+    console.log("match", matchRole);
     const existingUser = await usersService.getUser({
         where: {
             [Op.or]: [
@@ -192,9 +196,9 @@ async function addUser(req, res, values) {
             ]
         }
     });
-    console.log("controller", existingUser);
+    console.log("controller", !existingUser);
 
-    if ((existingUser == null) && (data.role === matchRole)) {
+    if (!existingUser) {
         if (data.password === data.confirmPassword) {
             const salt = await bcrypt.genSalt(10);
             data.password = await bcrypt.hash(data.password, salt);
