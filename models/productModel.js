@@ -1,3 +1,5 @@
+const { Sequelize } = require('sequelize');
+
 module.exports = (sequelize , DataTypes)=>{
     const product = sequelize.define('products', {
         id:{
@@ -6,7 +8,8 @@ module.exports = (sequelize , DataTypes)=>{
             primaryKey: true
         },
         sellerId:{
-            type:DataTypes.INTEGER,
+            type: Sequelize.UUID, 
+            defaultValue: Sequelize.UUIDV4,
             model: 'user',
             key: 'id'
         },

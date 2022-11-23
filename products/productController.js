@@ -18,7 +18,6 @@ exports.addProduct = async (req,res) => {
     try {
         const data = req.body;
         data.sellerId = req.user.id;
-        console.log(data);
         const isProductExist = await productService.checkIfExits(data);
         if(isProductExist == null){
             const product = await productService.addProduct(data);

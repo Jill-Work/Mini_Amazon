@@ -1,12 +1,13 @@
 const model = require("../models/db");
-var Sequelize = require("sequelize");
+const  Sequelize = require("sequelize");
+const common = require("../common/common");
 const Op = Sequelize.Op;
 
 // get product
 exports.getProduct = async (id) => {
     const condition = id ? { where: { id } } : {}
-    const product = await model.product.findOne(condition)
-    return product.dataValues;
+    const data = await model.product.findOne(condition)
+    return common.nullCheck(data);
 };
 
 
@@ -20,18 +21,14 @@ exports.getOneProduct = async (id) => {
                 attributes: ['id','role']  
             }]
         });
-    return data.dataValues;
+    return common.nullCheck(data);
 };
 
 exports.cartCheck = async (data) => {
     const user = await model.cart.findOne({
         where:{ buyer_id:data.buyerId , product_id:data.productId }
     });
-    if (user == null) {
-        return null;
-    } else {
-        return user.dataValues;
-    }
+    return common.nullCheck(user);
 }
 
 
@@ -48,11 +45,7 @@ exports.checkIfExits = async (data) => {
             ]
         }
     });
-    if (user == null) {
-        return null;
-    } else {
-        return user.dataValues;
-    }
+    return common.nullCheck(user)
 };
 
 exports.updateStock = async (id,stock) => {

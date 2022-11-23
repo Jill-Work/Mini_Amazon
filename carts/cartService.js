@@ -7,6 +7,11 @@ exports.getCartAllProduct = async (id) => {
     return await model.cart.findAll({ where: { buyer_id: id } });
 }
 
+//sum of cart value
+exports.sum = async (data) => {
+    return await model.cart.sum(data)
+}
+
 // add and update to cart
 exports.addAndUpdateToCart = async (cartData, buyerId, productId, quantity) => {
     const foundItem = await model.cart.findOne({ where: { buyerId, productId } });
