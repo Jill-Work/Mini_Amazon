@@ -1,6 +1,6 @@
 const usersService = require("./usersServices");
 const bcrypt = require('bcrypt');
-const { tokenJwt } = require("../common/jwtToken");
+const common = require("../common/common");
 const { Op } = require('sequelize');
 
 // get user
@@ -70,7 +70,7 @@ exports.logIn = async (req, res) => {
             const userPassword = users.password;
             const passwordCompare = await bcrypt.compare(password, userPassword);
             if (passwordCompare) {
-                const token = tokenJwt(users);
+                const token = common.tokenJwt(users);
                 res.status(200).json( { ...userData , token });
             } else {
                 res.status(404).json({ error: "invalid details" });
@@ -185,9 +185,8 @@ async function addUser(req, res, values) {
     const data = req.body;
     const matchRole = values.find(element => element == data.role);
     if (!matchRole) {
-        return res.status(401).json({ Message: "You are authorize to this page" });
+        return  res.status(400).json({ Message: "You are not authorize to this page" });
     }
-    console.log("match", matchRole);
     const existingUser = await usersService.getUser({
         where: {
             [Op.or]: [
@@ -196,8 +195,6 @@ async function addUser(req, res, values) {
             ]
         }
     });
-    console.log("controller", !existingUser);
-
     if (!existingUser) {
         if (data.password === data.confirmPassword) {
             const salt = await bcrypt.genSalt(10);

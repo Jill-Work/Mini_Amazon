@@ -3,7 +3,7 @@ const env = require("../.env");
 
 
 // jwt token
-function tokenJwt(users) {
+exports.tokenJwt = (users) => {
     const tokenData = {
         id: users.id,
         role: users.role,
@@ -15,4 +15,11 @@ function tokenJwt(users) {
     return token;
 };
 
-module.exports = { tokenJwt };
+// null check function
+exports.nullCheck = (data) => {
+    if (data == null) {
+        return null;
+    } else {
+        return data.dataValues;
+    }
+};

@@ -14,11 +14,9 @@ exports.userAuth = (req, res, next) => {
                 error: err.message
             });
         } else {
-            const routes = req.baseUrl;
-            console.log(routes);
+            const routes = req.path;
             const role = user.role;
             const dbAuth = await model.routeAuth.findOne({ where: { role, routes } });
-            console.log(dbAuth);
             if (dbAuth) {
                 const dbRole = dbAuth.dataValues.role;
                 if ((dbRole == role) || (role == "ADMIN")) {

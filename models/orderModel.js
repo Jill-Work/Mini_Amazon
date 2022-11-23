@@ -1,3 +1,5 @@
+const { Sequelize } = require('sequelize');
+
 module.exports = (sequelize , DataTypes)=>{
     const cart = sequelize.define('orders', {
         id:{
@@ -6,7 +8,8 @@ module.exports = (sequelize , DataTypes)=>{
             primaryKey: true
         },
         buyerId:{
-            type:DataTypes.INTEGER,
+            type: Sequelize.UUID, 
+            defaultValue: Sequelize.UUIDV4,
             model: 'user',
             key: 'id'
         },
