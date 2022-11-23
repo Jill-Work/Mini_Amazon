@@ -27,7 +27,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(225)
         },
     }, {
-        timestamps: false,
         underscored: true,
     })
     return users;

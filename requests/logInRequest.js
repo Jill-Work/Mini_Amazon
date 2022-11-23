@@ -1,6 +1,6 @@
 const Joi = require('joi');
 
-exports.logIn = (req, res, next) => {
+exports.checkLoginParameter = (req, res, next) => {
     const validation = Joi.object({
         email: Joi.string().required(),
         password: Joi.string().required(),

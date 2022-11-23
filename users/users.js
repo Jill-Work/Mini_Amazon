@@ -1,27 +1,25 @@
 const express = require('express');
 const router = express.Router();
 const usersController = require("../users/usersController");
-const usersMiddleware = require("../middleware/usersMiddleware");
-const insertUsers = require("../requests/insertUserRequest");
-const logIn = require("../requests/logInRequest");
-const update = require("../requests/updateRequest")
+const authMiddleware = require("../middleware/authMiddleware");
+const validator = require("../requests/indexOfRequest");
 
-// usersMiddleware.userAuth,
-router.get("/user/:id",  usersController.getUser);
 
-router.get("/list", usersMiddleware.userAuth, usersController.getUsers);
+router.get("/user/:id", authMiddleware.authOfUsers, usersController.userDetails);
 
-router.post("/signup", insertUsers.insertUsers, usersController.signUp);
+router.get("/list", authMiddleware.authOfUsers, usersController.userList);
 
-router.get("/login", logIn.logIn, usersController.logIn);
+router.post("/signup", validator.userSignUpValidation, usersController.userSignUp);
 
-router.put("/update", update.updateUser, usersMiddleware.userAuth, usersController.updateUsers);
+router.get("/login", validator.checkLoginParameter, usersController.userLogIn);
 
-router.put("/changePassword", usersMiddleware.userAuth, usersController.changePassword);
+router.put("/update", [validator.updateUser, authMiddleware.authOfUsers], usersController.userUpdate);
 
-router.delete("/:id", usersMiddleware.userAuth, usersController.deleteUsers);
+router.put("/changePassword", authMiddleware.authOfUsers, usersController.userPasswordChange);
 
-router.post("/adminSignup", insertUsers.insertUsers, usersController.admin);
+router.delete("/:id", authMiddleware.authOfUsers, usersController.userDelete);
+
+router.post("/adminSignup", validator.userSignUpValidation, usersController.admin);
 
 
 module.exports = router;

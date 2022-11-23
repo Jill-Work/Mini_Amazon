@@ -13,7 +13,7 @@ exports.addAndUpdateToCart = async (req, res) => {
     const { productId, quantity } = req.query;
     const buyerId = req.user.id;
     const getProduct = await productService.getOneProduct(productId);
-    if (getProduct != null) {
+    if (getProduct) {
         const cartData = {
             buyerId: buyerId,
             sellerId: getProduct.sellerId,
@@ -25,9 +25,7 @@ exports.addAndUpdateToCart = async (req, res) => {
         const data = await cartService.addAndUpdateToCart(cartData, buyerId, parseInt(productId), parseInt(quantity));
         res.status(200).json(data);
     } else {
-        res.status(403).json({
-            message: "Product Not in List"
-        });
+        res.status(403).json({ message: "Product Not in List" });
     }
 };
 
@@ -36,7 +34,5 @@ exports.deleteFromCart = async (req, res) => {
     const buyerId = req.user.id;
     const productId = req.query.productId;
     await cartService.deleteFromCart(buyerId, parseInt(productId));
-    res.status(403).json({
-        message: "Deleted Item was " + req.query.productId
-    });
+    res.status(403).json({ message: "Deleted Item was " + req.query.productId });
 };
