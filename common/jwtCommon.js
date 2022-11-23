@@ -14,12 +14,3 @@ exports.tokenJwt = (users) => {
     const token = jwt.sign(tokenData, SECRET_KEY);
     return token;
 };
-
-// null check function
-exports.nullCheck = (data) => {
-    if (data == null) {
-        return null;
-    } else {
-        return data.dataValues;
-    }
-};

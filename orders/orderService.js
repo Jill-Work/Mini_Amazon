@@ -1,9 +1,9 @@
 const model = require("../models/db");
-const common = require("../common/common");
+const common = require("../common/indexOfCommon");
 
 
 // get order details
-exports. getOrderDetails = async (id) => {
+exports.getOrderDetails = async (id) => {
     return await model.order_product.findAll({ where: { order_id: id } });
 };
 

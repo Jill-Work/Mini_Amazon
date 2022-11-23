@@ -1,9 +1,9 @@
 const { Sequelize } = require('sequelize');
 
 module.exports = (sequelize , DataTypes)=>{
-    const cart = sequelize.define('orders', {
+    const order = sequelize.define('orders', {
         id:{
-            type:DataTypes.INTEGER,
+            type: Sequelize.UUID,
             autoIncrement: true,
             primaryKey: true
         },
@@ -26,7 +26,7 @@ module.exports = (sequelize , DataTypes)=>{
         timestamps:false,
         underscored:true,
     })
-    return cart;
+    return order;
 };
 
 

@@ -1,24 +1,29 @@
 const model = require("../models/db");
 const { Op } = require('sequelize');
+const common = require("../common/indexOfCommon");
 
 
 // get cart all product
 exports.getCartAllProduct = async (id) => {
-    return await model.cart.findAll({ where: { buyer_id: id } });
-}
+    const data = await model.cart.findAll({ where: { buyer_id: id } });
+    return common.nullCheck(data);
+};
 
 //sum of cart value
 exports.sum = async (data) => {
-    return await model.cart.sum(data)
-}
+    const data = await model.cart.sum(data);
+    return common.nullCheck(data);
+};
 
 // add and update to cart
 exports.addAndUpdateToCart = async (cartData, buyerId, productId, quantity) => {
     const foundItem = await model.cart.findOne({ where: { buyerId, productId } });
     if (!foundItem) {
-        return await model.cart.create(cartData);
+        const data = await model.cart.create(cartData);
+        return common.nullCheck(data);
     } else {
-        return await model.cart.update({ quantity }, { where: { buyerId, productId } });
+        const data = await model.cart.update({ quantity }, { where: { buyerId, productId } });
+        return common.nullCheck(data);
     }
 };
 
@@ -29,6 +34,7 @@ exports.deleteFromCart = async (buyerId, productId) => {
             [Op.and]: [
                 { buyerId },
                 { productId }
-            ]}
+            ]
+        }
     });
 };

@@ -1,18 +1,18 @@
 const usersService = require("./usersServices");
 const bcrypt = require('bcrypt');
-const common = require("../common/common");
+const common = require("../common/indexOfCommon");
 const { Op } = require('sequelize');
 
 // get user
-exports.getUser = async (req, res) => {
+exports.userDetails = async (req, res) => {
     try {
         console.log(req.originalUrl);
         const { id } = req.params;
-        const users = await usersService.getUser({ 
+        const existingUser = await usersService.getUserData({
             where: { id },
-            attributes: {exclude: ['password']},
-             });
-        res.status(200).json(users);
+            attributes: { exclude: ['password'] },
+        });
+        res.status(200).json(existingUser);
     } catch (error) {
         res.status(403).json({
             message: error + 'Server error occurred'
@@ -21,7 +21,7 @@ exports.getUser = async (req, res) => {
 };
 
 // get users
-exports.getUsers = async (req, res) => {
+exports.userList = async (req, res) => {
     try {
         const { query } = req.query;
         let condition = {};
@@ -35,7 +35,7 @@ exports.getUsers = async (req, res) => {
                 offset: parseInt(query.size) * parseInt((query.page - 1)),
             };
         }
-        const users = await usersService.getUsers(condition);
+        const users = await usersService.getUserData(condition);
         res.status(200).json(users);
     } catch (error) {
         res.status(403).json({
@@ -45,10 +45,10 @@ exports.getUsers = async (req, res) => {
 };
 
 //  Sign Up
-exports.signUp = async (req, res) => {
+exports.userSignUp = async (req, res) => {
     try {
         const values = ['BUYER', 'SELLER']
-        await addUser(req, res, values)
+        await createNewUser (req, res, values)
     } catch (error) {
         res.status(403).json({
             message: error + 'Server error occurred'
@@ -57,21 +57,21 @@ exports.signUp = async (req, res) => {
 };
 
 // log in
-exports.logIn = async (req, res) => {
+exports.userLogIn = async (req, res) => {
     try {
         const { password, email, role } = req.body;
-        const users = await usersService.getUser({ where: { email } });
+        const users = await usersService.getUserData({ where: { email } });
         const userData = {
-            role : users.role,
-            firstName : users.firstName,
-            lastName : users.lastName,
+            role: users.role,
+            firstName: users.firstName,
+            lastName: users.lastName,
         }
         if (users) {
             const userPassword = users.password;
             const passwordCompare = await bcrypt.compare(password, userPassword);
             if (passwordCompare) {
                 const token = common.tokenJwt(users);
-                res.status(200).json( { ...userData , token });
+                res.status(200).json({ ...userData, token });
             } else {
                 res.status(404).json({ error: "invalid details" });
             }
@@ -86,11 +86,11 @@ exports.logIn = async (req, res) => {
 };
 
 // update users
-exports.updateUsers = async (req, res) => {
+exports.userUpdate = async (req, res) => {
     try {
         const email = req.user.email;
         const body = req.body;
-        const userDbEmail = await usersService.getUser({ where: { email } });
+        const userDbEmail = await usersService.getUserData({ where: { email } });
         let update = {};
         if (body.firstName.length != 0) {
             update.firstName = body.firstName;
@@ -99,7 +99,7 @@ exports.updateUsers = async (req, res) => {
             update.lastName = body.lastName;
         }
         if (req.body.hasOwnProperty("contactNumber")) {
-            const oldNumber = await usersService.getUsers({ where: { contactNumber: body.contactNumber } });
+            const oldNumber = await usersService.getUserData({ where: { contactNumber: body.contactNumber } });
             if (oldNumber.length == 0) {
                 update.contactNumber = body.contactNumber;
             } else {
@@ -107,7 +107,7 @@ exports.updateUsers = async (req, res) => {
             }
         };
         if (req.body.hasOwnProperty("email")) {
-            const oldEmail = await usersService.getUser({ where: { email: req.body.email } });
+            const oldEmail = await usersService.getUserData({ where: { email: req.body.email } });
             if (oldEmail == null) {
                 update.email = req.body.email;
             } else {
@@ -115,7 +115,7 @@ exports.updateUsers = async (req, res) => {
             }
         };
 
-        await usersService.updateUsers(userDbEmail.email, update);
+        await usersService.updateUser(userDbEmail.email, update);
         res.status(200).json(update);
     } catch (error) {
         res.status(403).json({
@@ -125,20 +125,20 @@ exports.updateUsers = async (req, res) => {
 };
 
 // change password
-exports.changePassword = async (req, res) => {
+exports.userPasswordChange = async (req, res) => {
     try {
         const email = req.user.email;
         const { oldPassword, newPassword, confirmPassword } = req.body;
         const update = {};
         if (newPassword === confirmPassword) {
-            const user = await usersService.getUser({ where: { email } });
+            const user = await usersService.getUserData({ where: { email } });
             bcrypt.compare(oldPassword, user.password, async (err, data) => {
                 if (err) throw err;
 
                 if (data) {
                     const salt = await bcrypt.genSalt(10);
                     update.password = await bcrypt.hash(newPassword, salt);
-                    await usersService.updateUsers(email, update);
+                    await usersService.updateUser(email, update);
                     res.status(200).json({ Message: "Your password is updated successfully" });
                 } else {
                     res.status(400).json({ Message: "Your password is incorrect" });
@@ -155,10 +155,10 @@ exports.changePassword = async (req, res) => {
 };
 
 // delete users
-exports.deleteUsers = async (req, res) => {
+exports.userDelete = async (req, res) => {
     try {
         const email = req.query.email;
-        await usersService.deleteUsers(email);
+        await usersService.deleteUser(email);
         res.status(200).json({ "Deleted account was": email });
     } catch (error) {
         res.status(403).json({
@@ -171,7 +171,7 @@ exports.deleteUsers = async (req, res) => {
 exports.admin = async (req, res) => {
     try {
         const values = ['ADMIN'];
-        await addUser(req, res, values);
+        await createNewUser(req, res, values);
     } catch (error) {
         res.status(403).json({
             message: error + 'Server error occurred'
@@ -181,28 +181,28 @@ exports.admin = async (req, res) => {
 
 
 //  Add User or Admin Function 
-async function addUser(req, res, values) {
-    const data = req.body;
-    const matchRole = values.find(element => element == data.role);
+async function createNewUser(req, res, values) {
+    const bodyData = req.body;
+    const matchRole = values.find(element => element == bodyData.role);
     if (!matchRole) {
-        return  res.status(400).json({ Message: "You are not authorize to this page" });
+        return res.status(400).json({ Message: "You are not authorize to this page" });
     }
-    const existingUser = await usersService.getUser({
+    const existingUser = await usersService.getUserData({
         where: {
             [Op.or]: [
-                { email: data.email },
-                { contactNumber: data.contactNumber }
+                { email: bodyData.email },
+                { contactNumber: bodyData.contactNumber }
             ]
         }
     });
     if (!existingUser) {
-        if (data.password === data.confirmPassword) {
+        if (bodyData.password === bodyData.confirmPassword) {
             const salt = await bcrypt.genSalt(10);
-            data.password = await bcrypt.hash(data.password, salt);
-            const users = await usersService.addUsers(data);
-            const token = tokenJwt(users);
-            const usersData = { ...users, token };
-            res.status(200).json(usersData);
+            bodyData.password = await bcrypt.hash(bodyData.password, salt);
+            const newUser = await usersService.creteUser(bodyData);
+            const token = tokenJwt(newUser);
+            const newUserDetail = { ...newUser, token };
+            res.status(200).json(newUserDetail);
         } else {
             res.status(401).json({ Message: "Invalid Confirm Password" });
         }

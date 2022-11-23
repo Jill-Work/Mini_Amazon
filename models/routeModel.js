@@ -1,7 +1,10 @@
+const { Sequelize } = require('sequelize');
+
 module.exports = (sequelize , DataTypes)=>{
-    const users = sequelize.define('routes', {
+    const route = sequelize.define('routes', {
         id:{
-            type:DataTypes.INTEGER,
+            type: Sequelize.UUID, 
+            defaultValue: Sequelize.UUIDV4,
             autoIncrement: true,
             primaryKey: true
         },
@@ -15,6 +18,6 @@ module.exports = (sequelize , DataTypes)=>{
         timestamps:false,
         underscored:true,
     })
-    return users;
+    return route;
 };
 

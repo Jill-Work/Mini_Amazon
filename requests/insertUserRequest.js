@@ -2,7 +2,7 @@
 const Joi = require('joi');
 const string = require("string-sanitizer");
 
-exports.insertUsers = (req, res, next) => {
+exports.userSignUpValidation = (req, res, next) => {
     const validation = Joi.object({
         role: Joi.string().required(),
         firstName: Joi.string().required(),
@@ -17,14 +17,14 @@ exports.insertUsers = (req, res, next) => {
     if (error) {
         return res.status(400).json({ "error": error.message });
     } else {
-        const incomingData = req.body;
-        incomingData.role = string.sanitize.removeNumber(incomingData.role);
-        incomingData.firstName = string.sanitize.removeNumber(incomingData.firstName);
-        incomingData.lastName = string.sanitize.removeNumber(incomingData.lastName);
-        // incomingData.email = string.validate.isEmail(incomingData.email)     //email validation
-        incomingData.role = incomingData.role.toUpperCase();
-        incomingData.firstName = incomingData.firstName.charAt(0).toUpperCase() + incomingData.firstName.slice(1);
-        incomingData.lastName = incomingData.lastName.charAt(0).toUpperCase() + incomingData.lastName.slice(1);
+        const bodyData = req.body;
+        bodyData.role = string.sanitize.removeNumber(bodyData.role);
+        bodyData.firstName = string.sanitize.removeNumber(bodyData.firstName);
+        bodyData.lastName = string.sanitize.removeNumber(bodyData.lastName);
+        // bodyData.email = string.validate.isEmail(bodyData.email)     //email validation
+        bodyData.role = bodyData.role.toUpperCase();
+        bodyData.firstName = bodyData.firstName.charAt(0).toUpperCase() + bodyData.firstName.slice(1);
+        bodyData.lastName = bodyData.lastName.charAt(0).toUpperCase() + bodyData.lastName.slice(1);
         console.log("insert request check is done");
         next();
     }

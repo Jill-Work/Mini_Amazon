@@ -3,7 +3,8 @@ const { Sequelize } = require('sequelize');
 module.exports = (sequelize , DataTypes)=>{
     const product = sequelize.define('products', {
         id:{
-            type:DataTypes.INTEGER,
+            type: Sequelize.UUID, 
+            defaultValue: Sequelize.UUIDV4,
             autoIncrement: true,
             primaryKey: true
         },
@@ -36,7 +37,6 @@ module.exports = (sequelize , DataTypes)=>{
             type:DataTypes.INTEGER,
         }
     },{
-        timestamps:false,
         underscored:true,
     })
     return product;
