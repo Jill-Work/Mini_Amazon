@@ -1,5 +1,5 @@
 const model = require("../models/db");
-const common = require("../common/common");
+const common = require("../common/indexOfCommon");
 
 
 //get user

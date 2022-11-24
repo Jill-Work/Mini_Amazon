@@ -6,7 +6,6 @@ const { Op } = require('sequelize');
 // get user
 exports.userDetails = async (req, res) => {
     try {
-        console.log(req.originalUrl);
         const { id } = req.params;
         const existingUser = await usersService.getUserData({
             where: { id },
@@ -14,9 +13,7 @@ exports.userDetails = async (req, res) => {
         });
         res.status(200).json(existingUser);
     } catch (error) {
-        res.status(403).json({
-            message: error + 'Server error occurred'
-        });
+        res.status(403).json({ message: error + 'Server error occurred' });
     }
 };
 
@@ -38,9 +35,7 @@ exports.userList = async (req, res) => {
         const users = await usersService.getUserData(condition);
         res.status(200).json(users);
     } catch (error) {
-        res.status(403).json({
-            message: error + 'Server error occurred'
-        });
+        res.status(403).json({ message: error + 'Server error occurred' });
     }
 };
 
@@ -48,11 +43,9 @@ exports.userList = async (req, res) => {
 exports.userSignUp = async (req, res) => {
     try {
         const values = ['BUYER', 'SELLER']
-        await createNewUser (req, res, values)
+        await createNewUser(req, res, values)
     } catch (error) {
-        res.status(403).json({
-            message: error + 'Server error occurred'
-        });
+        res.status(403).json({ message: error + 'Server error occurred' });
     }
 };
 
@@ -79,9 +72,7 @@ exports.userLogIn = async (req, res) => {
             res.status(404).json({ error: "invalid details" });
         }
     } catch (error) {
-        res.status(403).json({
-            message: error + 'Server error occurred'
-        });
+        res.status(403).json({ message: error + 'Server error occurred' });
     }
 };
 
@@ -118,9 +109,7 @@ exports.userUpdate = async (req, res) => {
         await usersService.updateUser(userDbEmail.email, update);
         res.status(200).json(update);
     } catch (error) {
-        res.status(403).json({
-            message: error + 'Server error occurred'
-        })
+        res.status(403).json({ message: error + 'Server error occurred' })
     }
 };
 
@@ -148,9 +137,7 @@ exports.userPasswordChange = async (req, res) => {
             res.status(400).json({ Message: "Password didn't match" });
         };
     } catch (error) {
-        res.status(403).json({
-            message: error + 'Server error occurred'
-        });
+        res.status(403).json({ message: error + 'Server error occurred' });
     }
 };
 
@@ -161,9 +148,7 @@ exports.userDelete = async (req, res) => {
         await usersService.deleteUser(email);
         res.status(200).json({ "Deleted account was": email });
     } catch (error) {
-        res.status(403).json({
-            message: error + 'Server error occurred'
-        });
+        res.status(403).json({ message: error + 'Server error occurred' });
     }
 };
 
@@ -173,9 +158,7 @@ exports.admin = async (req, res) => {
         const values = ['ADMIN'];
         await createNewUser(req, res, values);
     } catch (error) {
-        res.status(403).json({
-            message: error + 'Server error occurred'
-        });
+        res.status(403).json({ message: error + 'Server error occurred' });
     }
 };
 
@@ -200,8 +183,10 @@ async function createNewUser(req, res, values) {
             const salt = await bcrypt.genSalt(10);
             bodyData.password = await bcrypt.hash(bodyData.password, salt);
             const newUser = await usersService.creteUser(bodyData);
-            const token = tokenJwt(newUser);
+            delete newUser.password;
+            const token = common.tokenJwt(newUser);
             const newUserDetail = { ...newUser, token };
+
             res.status(200).json(newUserDetail);
         } else {
             res.status(401).json({ Message: "Invalid Confirm Password" });

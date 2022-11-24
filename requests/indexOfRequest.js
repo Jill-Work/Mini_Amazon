@@ -1,3 +1,5 @@
-export { userSignUpValidation } from "./insertUserRequest";
-export { logIn } from "./logInRequest";
-export { updateUser } from "./updateRequest";
+const { updateUser } = require("../users/usersServices");
+const { userSignUpValidation } = require("./insertUserRequest");
+const { checkLoginParameter } = require("./logInRequest");
+
+module.exports = { userSignUpValidation, updateUser, checkLoginParameter };

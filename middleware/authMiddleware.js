@@ -16,7 +16,7 @@ exports.authOfUsers = (req, res, next) => {
             if (authFromDatabase) {
                 const roleFromDatabase = authFromDatabase.dataValues.role;
                 if ((roleFromDatabase == roleFromToken) || (roleFromToken == "ADMIN")) {
-                    console.log("auth middleware check is successfully");
+                    console.log("Auth Middleware Check is Successfully");
                     req.user = user;
                     next();
                 }

@@ -1,30 +1,30 @@
 const { Sequelize } = require('sequelize');
 
-module.exports = (sequelize , DataTypes)=>{
+module.exports = (sequelize, DataTypes) => {
     const order = sequelize.define('orders', {
-        id:{
+        id: {
             type: Sequelize.UUID,
-            autoIncrement: true,
-            primaryKey: true
+            defaultValue: Sequelize.UUIDV4,
+            primaryKey: true,
         },
-        buyerId:{
-            type: Sequelize.UUID, 
+        buyerId: {
+            type: Sequelize.UUID,
             defaultValue: Sequelize.UUIDV4,
             model: 'user',
             key: 'id'
         },
-        address:{
-            type:DataTypes.STRING(100),
+        address: {
+            type: DataTypes.STRING(100),
         },
         contactNumber: {
-            type:DataTypes.INTEGER
+            type: DataTypes.INTEGER
         },
-        total:{
-            type:DataTypes.INTEGER,
+        total: {
+            type: DataTypes.INTEGER,
         }
-    },{
-        timestamps:false,
-        underscored:true,
+    }, {
+        timestamps: false,
+        underscored: true,
     })
     return order;
 };

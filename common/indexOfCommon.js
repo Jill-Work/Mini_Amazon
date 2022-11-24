@@ -1,2 +1,5 @@
-export { tokenJwt } from "./jwtCommon";
-export { nullCheck } from "./nullCheckCommon";
+const { tokenJwt } = require("./jwtCommon");
+const { nullCheck } = require("./nullCheckCommon");
+
+
+module.exports = { tokenJwt, nullCheck };
