@@ -25,7 +25,7 @@ exports.userSignUpValidation = (req, res, next) => {
         bodyData.role = bodyData.role.toUpperCase();
         bodyData.firstName = bodyData.firstName.charAt(0).toUpperCase() + bodyData.firstName.slice(1);
         bodyData.lastName = bodyData.lastName.charAt(0).toUpperCase() + bodyData.lastName.slice(1);
-        console.log("insert request check is done");
+        console.log("Insert User Data Validation Check Successfully");
         next();
     }
 };

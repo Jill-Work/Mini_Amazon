@@ -1,6 +1,6 @@
 const model = require("../models/db");
-const  Sequelize = require("sequelize");
-const common = require("../common/common");
+const Sequelize = require("sequelize");
+const common = require("../common/indexOfCommon");
 const Op = Sequelize.Op;
 
 // get product
@@ -15,18 +15,19 @@ exports.getProduct = async (id) => {
 // one product
 
 exports.getOneProduct = async (id) => {
-    const data = await model.product.findOne({where:{id},
-            include: [{
-                model: model.users,
-                attributes: ['id','role']  
-            }]
-        });
+    const data = await model.product.findOne({
+        where: { id },
+        include: [{
+            model: model.users,
+            attributes: ['id', 'role']
+        }]
+    });
     return common.nullCheck(data);
 };
 
 exports.cartCheck = async (data) => {
     const user = await model.cart.findOne({
-        where:{ buyer_id:data.buyerId , product_id:data.productId }
+        where: { buyer_id: data.buyerId, product_id: data.productId }
     });
     return common.nullCheck(user);
 }
@@ -48,8 +49,8 @@ exports.checkIfExits = async (data) => {
     return common.nullCheck(user)
 };
 
-exports.updateStock = async (id,stock) => {
-    return await model.product.update({stock},{where:{id}});
+exports.updateStock = async (id, stock) => {
+    return await model.product.update({ stock }, { where: { id } });
 }
 //jill -------
 
@@ -86,10 +87,10 @@ exports.getProductHistory = async (req, res) => {
                 price: filters.price
             }
         }
-        
+
     }
 
-    
+
 
     let condition = {
         where,

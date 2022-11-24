@@ -10,7 +10,7 @@ exports.checkLoginParameter = (req, res, next) => {
     if (error) {
         return res.status(400).json({ "error": error.message });
     } else {
-        console.log("middleware check is done");
+        console.log("LogIn Validation Check Successfully");
         next();
     }
 };

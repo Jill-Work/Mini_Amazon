@@ -11,8 +11,8 @@ exports.getCartAllProduct = async (id) => {
 
 //sum of cart value
 exports.sum = async (data) => {
-    const data = await model.cart.sum(data);
-    return common.nullCheck(data);
+    const sumOfValue = await model.cart.sum(data);
+    return common.nullCheck(sumOfValue);
 };
 
 // add and update to cart

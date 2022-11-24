@@ -1,42 +1,35 @@
 const { Sequelize } = require('sequelize');
 
-module.exports = (sequelize , DataTypes)=>{
+module.exports = (sequelize, DataTypes) => {
     const cart = sequelize.define('carts', {
-        id:{
-            type: Sequelize.UUID, 
+        id: {
+            type: Sequelize.UUID,
             defaultValue: Sequelize.UUIDV4,
-            autoIncrement: true,
-            primaryKey: true
+            primaryKey: true,
         },
-        buyerId:{
-            type: Sequelize.UUID, 
-            defaultValue: Sequelize.UUIDV4,
-            model: 'users',
-            key: 'id'
-        },
-        sellerId:{
-            type: Sequelize.UUID, 
+        buyerId: {
+            type: Sequelize.UUID,
             defaultValue: Sequelize.UUIDV4,
             model: 'users',
             key: 'id'
         },
         productId: {
-            type: Sequelize.UUID, 
+            type: Sequelize.UUID,
             defaultValue: Sequelize.UUIDV4,
             model: 'products',
             key: 'id'
         },
         price: {
-            type:DataTypes.INTEGER,
+            type: DataTypes.INTEGER,
         },
         quantity: {
-            type:DataTypes.INTEGER,
+            type: DataTypes.INTEGER,
         },
-        total:{
-            type:DataTypes.INTEGER,
+        total: {
+            type: DataTypes.INTEGER,
         }
-    },{
-        underscored:true,
+    }, {
+        underscored: true,
     })
     return cart;
 };

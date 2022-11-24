@@ -7,7 +7,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api', router);
 
-app.use('/', (req,res) => {
+app.use('/', (req, res) => {
     res.status(400).json({ Message: "Invalid Route" });
 });
 
