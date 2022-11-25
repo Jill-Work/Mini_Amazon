@@ -87,6 +87,6 @@ exports.productHistory = async (req, res) => {
             });
         }
     } catch (err) {
-        res.status(403).json({ message: 'Server error occurred' });
+        res.status(403).json({ message: ' Server error occurred' });
     }
 };
