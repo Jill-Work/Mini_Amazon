@@ -1,5 +1,5 @@
-const { updateUser } = require("../users/usersServices");
+const { updateUserValidation } = require("../requests/updateRequest");
 const { userSignUpValidation } = require("./insertUserRequest");
 const { checkLoginParameter } = require("./logInRequest");
 
-module.exports = { userSignUpValidation, updateUser, checkLoginParameter };
+module.exports = { userSignUpValidation, updateUserValidation, checkLoginParameter };

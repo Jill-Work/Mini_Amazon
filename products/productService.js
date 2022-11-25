@@ -7,7 +7,7 @@ const Op = Sequelize.Op;
 exports.getProduct = async (id) => {
     const condition = id ? { where: { id } } : {}
     const data = await model.product.findOne(condition)
-    return common.nullCheck(data);
+    return common.nullCheckWithDataValues(data);
 };
 
 
@@ -22,14 +22,14 @@ exports.getOneProduct = async (id) => {
             attributes: ['id', 'role']
         }]
     });
-    return common.nullCheck(data);
+    return common.nullCheckWithDataValues(data);
 };
 
 exports.cartCheck = async (data) => {
     const user = await model.cart.findOne({
-        where: { buyer_id: data.buyerId, product_id: data.productId }
+        where: { buyerId: data.buyerId, productId: data.productId }
     });
-    return common.nullCheck(user);
+    return common.nullCheckWithDataValues(user);
 }
 
 
@@ -46,7 +46,7 @@ exports.checkIfExits = async (data) => {
             ]
         }
     });
-    return common.nullCheck(user)
+    return common.nullCheckWithDataValues(user)
 };
 
 exports.updateStock = async (id, stock) => {

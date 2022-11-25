@@ -13,7 +13,7 @@ router.post("/signup", validator.userSignUpValidation, usersController.userSignU
 
 router.get("/login", validator.checkLoginParameter, usersController.userLogIn);
 
-router.put("/update", [validator.updateUser, authMiddleware.authOfUsers], usersController.userUpdate);
+router.put("/update", [validator.updateUserValidation, authMiddleware.authOfUsers], usersController.userUpdate);
 
 router.put("/changePassword", authMiddleware.authOfUsers, usersController.userPasswordChange);
 

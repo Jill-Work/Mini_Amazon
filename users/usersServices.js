@@ -5,7 +5,7 @@ const common = require("../common/indexOfCommon");
 //get user
 exports.getUserData = async (condition) => {
     const data = await model.users.findOne(condition);
-    return common.nullCheck(data);
+    return common.nullCheckWithDataValues(data);
 };
 
 // get users
@@ -47,14 +47,14 @@ exports.listOfRoute = async (operationsName,role) => {
 //find one route or permission name
 exports.findOnePermission = async (condition) => {
     const data = await model.permission.findOne(condition);
-    return common.nullCheck(data);
+    return common.nullCheckWithDataValues(data);
 };
 
 // add permission route
 exports.addPermission = async ({operationsName,role,routes}) => {
     const bodyData = {operationsName,role,routes};
     const data = await model.permission.create(bodyData);
-    return common.nullCheck(data);
+    return common.nullCheckWithDataValues(data);
 };
 
 //delete permission route

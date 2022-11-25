@@ -1,7 +1,7 @@
 const usersService = require("./usersServices");
 const bcrypt = require('bcrypt');
 const common = require("../common/indexOfCommon");
-const { where } = require("sequelize");
+const { Op } = require("sequelize");
 
 // get user
 exports.userDetails = async (req, res) => {
@@ -81,7 +81,7 @@ exports.userLogIn = async (req, res) => {
 exports.userUpdate = async (req, res) => {
     try {
         const body = req.body;
-        const existingUserData = await usersService.getUserData({ where: { email: req.user.email } });
+        const existingUserData = await usersService.getUserData({ where: { id: req.user.id } });
         let update = {};
         if (body.firstName.length != 0) {
             update.firstName = body.firstName;
@@ -89,34 +89,28 @@ exports.userUpdate = async (req, res) => {
         if (body.lastName.length != 0) {
             update.lastName = body.lastName;
         }
-        const existingUser = await usersService.getUserData({
-            where: {
-                [Op.or]: [
-                    { contactNumber: body.contactNumber },
-                    { email: req.body.email }
-                ]
-            }
-        });
+        const existingUserContactNumber = await usersService.getUserData({ 
+            where: { contactNumber: body.contactNumber }
+         });
         if (req.body.hasOwnProperty("contactNumber")) {
-            if (existingUser.length == 0) {
+            if (existingUserContactNumber == null) {
                 update.contactNumber = body.contactNumber;
             } else {
-                update.contactNumber = oldNumber.contactNumber;
+                update.contactNumber = existingUserContactNumber.contactNumber;
             }
         };
+        const existingUserEmail = await usersService.getUserData({ where: { email: req.body.email } });
         if (req.body.hasOwnProperty("email")) {
-
-            if (existingUser == null) {
+            if (existingUserEmail == null) {
                 update.email = req.body.email;
             } else {
-                update.email = oldEmail.email;
+                update.email = existingUserEmail.email;
             }
         };
-
         await usersService.updateUser(existingUserData.id, update);
         res.status(200).json(update);
     } catch (error) {
-        res.status(403).json({ message: error + 'Server error occurred' })
+        res.status(403).json({ message: error + ' Server error occurred' })
     }
 };
 
@@ -196,7 +190,7 @@ exports.addRoute = async (req, res) => {
         if (!existingPermission) {
             role = role.toUpperCase();
             routes = common.permission[operationsName];
-            const permissionAdded = await usersService.addPermission({operationsName,role,routes});
+            const permissionAdded = await usersService.addPermission({ operationsName, role, routes });
             res.status(200).json(permissionAdded);
         } else {
             res.status(403).json({ message: 'Already Exist' });
