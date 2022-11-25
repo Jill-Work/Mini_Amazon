@@ -3,8 +3,7 @@ const productService = require("./productService");
 // get Product
 exports.getProduct = async (req, res) => {
     try {
-        const { id } = req.query;
-        const product = await productService.getOneProduct(id);
+        const product = await productService.getOneProduct(req.query.id);
         res.send(product);
     } catch (error) {
         res.status(403).json({
@@ -19,18 +18,16 @@ exports.addProduct = async (req, res) => {
         const data = req.body;
         data.sellerId = req.user.id;
         const isProductExist = await productService.checkIfExits(data);
-        if (isProductExist == null) {
+        console.log(isProductExist);
+        console.log(isProductExist);
+        if (!isProductExist) {
             const product = await productService.addProduct(data);
             res.status(403).json(product)
         } else {
-            res.status(403).json({
-                message: 'Product Already Exits'
-            });
+            res.status(403).json({ message: 'Product Already Exits' });
         }
     } catch (error) {
-        res.status(403).json({
-            message: 'Server error occurRed'
-        });
+        res.status(403).json({ message: 'Server error occurRed' });
     }
 };
 

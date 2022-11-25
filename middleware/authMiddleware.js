@@ -10,20 +10,27 @@ exports.authOfUsers = (req, res, next) => {
         if (err) {
             res.status(404).json({ error: err.message });
         } else {
-            const routes = req.path;
+            const routes = req.baseUrl + req.route.path;
             const roleFromToken = user.role;
-            const authFromDatabase = await model.routeAuth.findOne({ where: { role: roleFromToken, routes } });
-            if (authFromDatabase) {
-                const roleFromDatabase = authFromDatabase.dataValues.role;
-                if ((roleFromDatabase == roleFromToken) || (roleFromToken == "ADMIN")) {
-                    console.log("Auth Middleware Check is Successfully");
-                    req.user = user;
-                    next();
-                }
+            if (roleFromToken == "ADMIN") {
+                console.log("admin Middleware Check is Successfully");
+                req.user = user;
+                next(); 
             } else {
-                res.status(403).json({ error: 'you are not authorize to this page' });
-                return;
+                const authFromDatabase = await model.permission.findOne({ where: { role: roleFromToken, routes } });
+                if (authFromDatabase) {
+                    const roleFromDatabase = authFromDatabase.dataValues.role;
+                    if (roleFromDatabase == roleFromToken) {
+                        console.log("Auth Middleware Check is Successfully");
+                        req.user = user;
+                        next();
+                    }
+                } else {
+                    res.status(403).json({ error: 'you are not authorize to this page' });
+                    return;
+                }
             }
         }
+
     })
 };

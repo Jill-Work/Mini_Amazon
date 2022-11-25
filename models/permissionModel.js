@@ -1,22 +1,25 @@
 const { Sequelize } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-    const route = sequelize.define('routes', {
+    const permission = sequelize.define('permission', {
         id: {
             type: Sequelize.UUID,
             defaultValue: Sequelize.UUIDV4,
             primaryKey: true,
         },
-        role: {
-            type: DataTypes.STRING(20)
+        operationsName: {
+            type: DataTypes.STRING(100)
         },
-        routes: {
-            type: DataTypes.STRING(20)
-        }
+        role: {
+            type: DataTypes.STRING(100)
+        },
+        routes:{
+            type: DataTypes.STRING(100)
+        },
     }, {
-        timestamps: false,
         underscored: true,
     })
-    return route;
+    return permission;
 };
+
 

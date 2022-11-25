@@ -16,6 +16,7 @@ exports.insertProduct = (req, res, next) => {
     if (error) {
         return res.status(400).json({ error: err.message });
     } else {
+        console.log("Product Validation Successfully");
         next();
     }
 };

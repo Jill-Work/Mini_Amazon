@@ -19,7 +19,7 @@ db.sequelize = sequelize;
 db.users = require("./usersModel")(sequelize, DataTypes);
 db.product = require("./productModel")(sequelize, DataTypes);
 db.cart = require("./cartModel")(sequelize, DataTypes);
-db.routeAuth = require("./routeModel")(sequelize, DataTypes);
+db.permission = require("./permissionModel")(sequelize, DataTypes);
 db.order = require("./orderModel")(sequelize, DataTypes);
 db.order_product = require("./order_productModels")(sequelize, DataTypes);
 

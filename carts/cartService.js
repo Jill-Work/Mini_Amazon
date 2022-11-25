@@ -4,15 +4,15 @@ const common = require("../common/indexOfCommon");
 
 
 // get cart all product
-exports.getCartAllProduct = async (id) => {
-    const data = await model.cart.findAll({ where: { buyer_id: id } });
-    return common.nullCheck(data);
+exports.getCartAllProduct = async (buyer_id) => {
+    const data = await model.cart.findAll({ where: { buyer_id  } });
+    return common.nullCheckWithOutDataValues(data)
 };
 
 //sum of cart value
 exports.sum = async (data) => {
-    const sumOfValue = await model.cart.sum(data);
-    return common.nullCheck(sumOfValue);
+    const total =  await model.cart.sum(data);
+    return common.nullCheckWithOutDataValues(total);
 };
 
 // add and update to cart
@@ -20,10 +20,10 @@ exports.addAndUpdateToCart = async (cartData, buyerId, productId, quantity) => {
     const foundItem = await model.cart.findOne({ where: { buyerId, productId } });
     if (!foundItem) {
         const data = await model.cart.create(cartData);
-        return common.nullCheck(data);
+        return common.nullCheckWithDataValues(data);
     } else {
-        const data = await model.cart.update({ quantity }, { where: { buyerId, productId } });
-        return common.nullCheck(data);
+        await model.cart.update({ quantity }, { where: { buyerId, productId } });
+        return common.nullCheckWithOutDataValues("quantity is updated successfully");
     }
 };
 
