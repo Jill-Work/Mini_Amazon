@@ -19,7 +19,16 @@ router.put("/changePassword", authMiddleware.authOfUsers, usersController.userPa
 
 router.delete("/:id", authMiddleware.authOfUsers, usersController.userDelete);
 
+
 router.post("/adminSignup", validator.userSignUpValidation, usersController.admin);
+
+router.get("/listOfPermission", authMiddleware.authOfUsers ,usersController.listOfRoute);
+
+router.post("/addPermission", authMiddleware.authOfUsers , usersController.addRoute);
+
+router.put("/updatePermission", authMiddleware.authOfUsers);
+
+router.delete("/deletePermission", authMiddleware.authOfUsers);
 
 
 module.exports = router;

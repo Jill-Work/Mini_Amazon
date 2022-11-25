@@ -4,9 +4,10 @@ const common = require("../common/indexOfCommon");
 
 
 // get cart all product
-exports.getCartAllProduct = async (id) => {
-    const data = await model.cart.findAll({ where: { buyer_id: id } });
-    return common.nullCheck(data);
+exports.getCartAllProduct = async (buyer_id) => {
+    const data = await model.cart.findAll({ where: { buyer_id :"27a365ab-a224-4af0-b3fa-bd54d4460a1c" } });
+    console.log(...data);
+    return common.nullCheck(...data);
 };
 
 //sum of cart value

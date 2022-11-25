@@ -4,11 +4,11 @@ const authMiddleware = require("../middleware/authMiddleware");
 const productController = require("../products/productController");
 const productMiddleware = require("../middleware/productMiddleware");
 
-router.get("/", productController.getProduct);
+router.get("/product", productController.getProduct);
 
 router.post("/addProduct", authMiddleware.authOfUsers, productMiddleware.insertProduct, productController.addProduct);
 
-router.put("/:id", productController.updateProduct);
+router.put("/update/:id", productController.updateProduct);
 
 router.delete("/delete", productController.deleteProduct);
 

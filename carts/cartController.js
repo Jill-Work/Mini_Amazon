@@ -22,7 +22,7 @@ exports.addAndUpdateToCart = async (req, res) => {
             quantity: quantity,
             total: getProduct.price * quantity
         };
-        const data = await cartService.addAndUpdateToCart(cartData, buyerId, parseInt(productId), parseInt(quantity));
+        const data = await cartService.addAndUpdateToCart(cartData, buyerId, productId, parseInt(quantity));
         res.status(200).json(data);
     } else {
         res.status(403).json({ message: "Product Not in List" });

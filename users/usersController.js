@@ -1,7 +1,7 @@
 const usersService = require("./usersServices");
 const bcrypt = require('bcrypt');
 const common = require("../common/indexOfCommon");
-const { Op } = require('sequelize');
+const { where } = require("sequelize");
 
 // get user
 exports.userDetails = async (req, res) => {
@@ -43,7 +43,7 @@ exports.userList = async (req, res) => {
 exports.userSignUp = async (req, res) => {
     try {
         const values = ['BUYER', 'SELLER']
-        await createNewUser(req, res, values)
+        await common.createNewUser(req, res, values)
     } catch (error) {
         res.status(403).json({ message: error + 'Server error occurred' });
     }
@@ -54,8 +54,9 @@ exports.userLogIn = async (req, res) => {
     try {
         const { password, email, role } = req.body;
         const users = await usersService.getUserData({ where: { email } });
+        if (!users) return res.status(404).json({ error: "invalid details check again" });
+        console.log(users);
         const userData = {
-            role: users.role,
             firstName: users.firstName,
             lastName: users.lastName,
         }
@@ -79,9 +80,8 @@ exports.userLogIn = async (req, res) => {
 // update users
 exports.userUpdate = async (req, res) => {
     try {
-        const email = req.user.email;
         const body = req.body;
-        const userDbEmail = await usersService.getUserData({ where: { email } });
+        const existingUserData = await usersService.getUserData({ where: { email: req.user.email } });
         let update = {};
         if (body.firstName.length != 0) {
             update.firstName = body.firstName;
@@ -89,24 +89,31 @@ exports.userUpdate = async (req, res) => {
         if (body.lastName.length != 0) {
             update.lastName = body.lastName;
         }
+        const existingUser = await usersService.getUserData({
+            where: {
+                [Op.or]: [
+                    { contactNumber: body.contactNumber },
+                    { email: req.body.email }
+                ]
+            }
+        });
         if (req.body.hasOwnProperty("contactNumber")) {
-            const oldNumber = await usersService.getUserData({ where: { contactNumber: body.contactNumber } });
-            if (oldNumber.length == 0) {
+            if (existingUser.length == 0) {
                 update.contactNumber = body.contactNumber;
             } else {
                 update.contactNumber = oldNumber.contactNumber;
             }
         };
         if (req.body.hasOwnProperty("email")) {
-            const oldEmail = await usersService.getUserData({ where: { email: req.body.email } });
-            if (oldEmail == null) {
+
+            if (existingUser == null) {
                 update.email = req.body.email;
             } else {
                 update.email = oldEmail.email;
             }
         };
 
-        await usersService.updateUser(userDbEmail.email, update);
+        await usersService.updateUser(existingUserData.id, update);
         res.status(200).json(update);
     } catch (error) {
         res.status(403).json({ message: error + 'Server error occurred' })
@@ -156,43 +163,55 @@ exports.userDelete = async (req, res) => {
 exports.admin = async (req, res) => {
     try {
         const values = ['ADMIN'];
-        await createNewUser(req, res, values);
+        await common.createNewUser(req, res, values);
     } catch (error) {
         res.status(403).json({ message: error + 'Server error occurred' });
     }
 };
 
 
-//  Add User or Admin Function 
-async function createNewUser(req, res, values) {
-    const bodyData = req.body;
-    const matchRole = values.find(element => element == bodyData.role);
-    if (!matchRole) {
-        return res.status(400).json({ Message: "You are not authorize to this page" });
-    }
-    const existingUser = await usersService.getUserData({
-        where: {
-            [Op.or]: [
-                { email: bodyData.email },
-                { contactNumber: bodyData.contactNumber }
-            ]
-        }
-    });
-    if (!existingUser) {
-        if (bodyData.password === bodyData.confirmPassword) {
-            const salt = await bcrypt.genSalt(10);
-            bodyData.password = await bcrypt.hash(bodyData.password, salt);
-            const newUser = await usersService.creteUser(bodyData);
-            delete newUser.password;
-            const token = common.tokenJwt(newUser);
-            const newUserDetail = { ...newUser, token };
 
-            res.status(200).json(newUserDetail);
-        } else {
-            res.status(401).json({ Message: "Invalid Confirm Password" });
-        }
-    } else {
-        res.status(401).json({ Message: "users Already exits" });
+//get route permission 
+exports.listOfRoute = async (req, res) => {
+    try {
+        const { operationsName, role } = req.query
+        const permissionList = await usersService.listOfRoute(operationsName, role);
+        res.status(200).json(permissionList);
+    } catch (error) {
+        res.status(403).json({ message: error + 'Server error occurred' });
     }
-    return;
+};
+
+//add route permission
+exports.addRoute = async (req, res) => {
+    try {
+        let { operationsName, role, routes } = req.body;
+        const existingPermission = await usersService.findOnePermission({
+            where:
+            {
+                operationsName: operationsName,
+                role: role,
+            }
+        });
+        if (!existingPermission) {
+            role = role.toUpperCase();
+            routes = common.permission[operationsName];
+            const permissionAdded = await usersService.addPermission({operationsName,role,routes});
+            res.status(200).json(permissionAdded);
+        } else {
+            res.status(403).json({ message: 'Already Exist' });
+        };
+    } catch (error) {
+        res.status(403).json({ message: error + 'Server error occurred' });
+    };
+};
+
+//delete route permission
+exports.deleteRoute = async () => {
+    try {
+        await usersService.deletePermission(id);
+        res.status(200).json({ "Deleted id was": id });
+    } catch (error) {
+        res.status(403).json({ message: error + 'Server error occurred' });
+    }
 };
