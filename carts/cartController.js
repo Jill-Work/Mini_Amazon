@@ -25,7 +25,8 @@ exports.addAndUpdateToCart = async (req, res) => {
                 productId: getProduct.id,
                 price: getProduct.price,
                 quantity: quantity,
-                total: getProduct.price * quantity
+                total: getProduct.price * quantity,
+                updated_at : new Date(),
             };
             const data = await cartService.addAndUpdateToCart(cartData, buyerId, productId, parseInt(quantity));
             res.status(200).json(data);

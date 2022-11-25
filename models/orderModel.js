@@ -23,7 +23,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
         }
     }, {
-        timestamps: false,
         underscored: true,
     })
     return order;

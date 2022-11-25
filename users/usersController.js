@@ -1,7 +1,7 @@
 const usersService = require("./usersServices");
 const bcrypt = require('bcrypt');
 const common = require("../common/indexOfCommon");
-const { Op } = require("sequelize");
+
 
 // get user
 exports.userDetails = async (req, res) => {
@@ -107,6 +107,7 @@ exports.userUpdate = async (req, res) => {
                 update.email = existingUserEmail.email;
             }
         };
+        update.updated_at = new Date();
         await usersService.updateUser(existingUserData.id, update);
         res.status(200).json(update);
     } catch (error) {
@@ -128,6 +129,7 @@ exports.userPasswordChange = async (req, res) => {
                 if (data) {
                     const salt = await bcrypt.genSalt(10);
                     update.password = await bcrypt.hash(newPassword, salt);
+                    update.updated_at = new Date();
                     await usersService.updateUser(email, update);
                     res.status(200).json({ Message: "Your password is updated successfully" });
                 } else {
