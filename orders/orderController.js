@@ -9,7 +9,7 @@ exports.getOrder = async (req, res) => {
         const getOrderDetails = await orderService.getOrderDetails(req.user.id);
         res.status(200).json(getOrderDetails);
     } catch (error) {
-        res.status(403).json({ message: error + 'Server error occurred' });
+        res.status(403).json({ message: error + ' Server error occurred' });
     }
 
 };
@@ -43,6 +43,6 @@ exports.createOrder = async (req, res) => {
         };
         res.status(200).json({message: 'Your order placed successfully, Thankyou for shopping visit again.'});
     } catch (error) {
-        res.status(403).json({ message: error + 'Server error occurred' });
+        res.status(403).json({ message: error + ' Server error occurred' });
     }
 };

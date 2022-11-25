@@ -14,7 +14,7 @@ exports.userDetails = async (req, res) => {
         });
         res.status(200).json(existingUser);
     } catch (error) {
-        res.status(403).json({ message: error + 'Server error occurred' });
+        res.status(403).json({ message: error + ' Server error occurred' });
     }
 };
 
@@ -52,7 +52,7 @@ exports.userSignUp = async (req, res) => {
         const values = ['BUYER', 'SELLER']
         await common.createNewUser(req, res, values)
     } catch (error) {
-        res.status(403).json({ message: error + 'Server error occurred' });
+        res.status(403).json({ message: error + ' Server error occurred' });
     }
 };
 
@@ -80,7 +80,7 @@ exports.userLogIn = async (req, res) => {
             res.status(404).json({ error: "invalid details" });
         }
     } catch (error) {
-        res.status(403).json({ message: error + 'Server error occurred' });
+        res.status(403).json({ message: error + ' Server error occurred' });
     }
 };
 
@@ -154,7 +154,7 @@ exports.userPasswordChange = async (req, res) => {
             res.status(400).json({ Message: "Password didn't match" });
         };
     } catch (error) {
-        res.status(403).json({ message: error + 'Server error occurred' });
+        res.status(403).json({ message: error + ' Server error occurred' });
     }
 };
 
@@ -165,7 +165,7 @@ exports.userDelete = async (req, res) => {
         await usersService.deleteUser(email);
         res.status(200).json({ "Deleted account was": email });
     } catch (error) {
-        res.status(403).json({ message: error + 'Server error occurred' });
+        res.status(403).json({ message: error + ' Server error occurred' });
     }
 };
 
@@ -175,7 +175,7 @@ exports.admin = async (req, res) => {
         const values = ['ADMIN'];
         await common.createNewUser(req, res, values);
     } catch (error) {
-        res.status(403).json({ message: error + 'Server error occurred' });
+        res.status(403).json({ message: error + ' Server error occurred' });
     }
 };
 
@@ -188,7 +188,7 @@ exports.listOfRoute = async (req, res) => {
         const permissionList = await usersService.listOfRoute(operationsName, role);
         res.status(200).json(permissionList);
     } catch (error) {
-        res.status(403).json({ message: error + 'Server error occurred' });
+        res.status(403).json({ message: error + ' Server error occurred' });
     }
 };
 
@@ -212,7 +212,7 @@ exports.addRoute = async (req, res) => {
             res.status(403).json({ message: 'Already Exist' });
         };
     } catch (error) {
-        res.status(403).json({ message: error + 'Server error occurred' });
+        res.status(403).json({ message: error + ' Server error occurred' });
     };
 };
 
@@ -222,6 +222,6 @@ exports.deleteRoute = async () => {
         await usersService.deletePermission(id);
         res.status(200).json({ "Deleted id was": id });
     } catch (error) {
-        res.status(403).json({ message: error + 'Server error occurred' });
+        res.status(403).json({ message: error + ' Server error occurred' });
     }
 };

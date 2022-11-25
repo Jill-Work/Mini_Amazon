@@ -8,7 +8,7 @@ exports.getCartAllProduct = async (req, res) => {
         const cart = await cartService.getCartAllProduct(req.user.id);
         res.status(200).json(cart);
     } catch (error) {
-        res.status(403).json({ message: error + 'Server error occurred' });
+        res.status(403).json({ message: error + ' Server error occurred' });
     }
 };
 
@@ -34,7 +34,7 @@ exports.addAndUpdateToCart = async (req, res) => {
             res.status(403).json({ message: "Product Not in List" });
         }
     } catch (error) {
-        res.status(403).json({ message: error + 'Server error occurred' });
+        res.status(403).json({ message: error + ' Server error occurred' });
     }
 };
 
@@ -46,6 +46,6 @@ exports.deleteFromCart = async (req, res) => {
         await cartService.deleteFromCart(buyerId, parseInt(productId));
         res.status(403).json({ message: "Deleted Item was " + req.query.productId });
     } catch (error) {
-        res.status(403).json({ message: error + 'Server error occurred' });
+        res.status(403).json({ message: error + ' Server error occurred' });
     }
 };
