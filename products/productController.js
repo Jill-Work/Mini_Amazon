@@ -40,6 +40,7 @@ exports.updateProduct = async (req, res) => {
             const update = {
                 productName: req.body.productName
             };
+            update.updated_at = new Date();
             const product = await productService.updateProduct(id, update);
             console.log(product);
             res.send(product);
