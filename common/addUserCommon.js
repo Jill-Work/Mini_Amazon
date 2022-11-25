@@ -4,7 +4,7 @@ const { Op } = require('sequelize');
 const bcrypt = require('bcrypt');
 
 //  Add User or Admin Function 
-exports.    createNewUser = async (req, res, values) => {
+exports.createNewUser = async (req, res, values) => {
     const bodyData = req.body;
     const matchRole = values.find(element => element == bodyData.role);
     if (!matchRole) {

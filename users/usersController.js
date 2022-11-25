@@ -1,6 +1,7 @@
 const usersService = require("./usersServices");
 const bcrypt = require('bcrypt');
 const common = require("../common/indexOfCommon");
+const { Op } = require('sequelize')
 
 
 // get user
@@ -20,22 +21,28 @@ exports.userDetails = async (req, res) => {
 // get users
 exports.userList = async (req, res) => {
     try {
-        const { query } = req.query;
+        const { emailSearch , size , page } = req.query;
         let condition = {};
-        if (query.search) {
+        if (emailSearch) {
             condition = {
-                where: { "email": query.search }
+                where: { "email": emailSearch }
             };
-        } else if (query.size && query.page) {
+        } else if (size && page) {
             condition = {
-                limit: parseInt(query.size),
-                offset: parseInt(query.size) * parseInt((query.page - 1)),
+                limit: parseInt(size),
+                offset: parseInt(size) * parseInt((page - 1)),
             };
+        } else if (condition = {}){
+            condition = {attributes: {
+                exclude: ['password']}};
         }
-        const users = await usersService.getUserData(condition);
+        const users = await usersService.getUsersList(condition);
+        for (var i = 0; i < users.length; i++) {
+            delete users.password;
+          }
         res.status(200).json(users);
     } catch (error) {
-        res.status(403).json({ message: error + 'Server error occurred' });
+        res.status(403).json({ message: error + ' Server error occurred' });
     }
 };
 
@@ -89,26 +96,33 @@ exports.userUpdate = async (req, res) => {
         if (body.lastName.length != 0) {
             update.lastName = body.lastName;
         }
-        const existingUserContactNumber = await usersService.getUserData({ 
-            where: { contactNumber: body.contactNumber }
-         });
-        if (req.body.hasOwnProperty("contactNumber")) {
-            if (existingUserContactNumber == null) {
+        const existingContactNumberOrEmail = await usersService.getUsersList({
+            where: {
+                [Op.or]: [
+                    { contactNumber: body.contactNumber },
+                    { email: req.body.email }
+                ]
+            }
+        });
+
+        if ((req.body.hasOwnProperty("contactNumber")) || (req.body.hasOwnProperty("email"))) {
+            if (existingContactNumberOrEmail.length == 0) {
                 update.contactNumber = body.contactNumber;
+                update.email = body.email;
             } else {
-                update.contactNumber = existingUserContactNumber.contactNumber;
+                for (let i = 0; i < existingContactNumberOrEmail.length; i++) {
+                    const element = existingContactNumberOrEmail[i];
+                    if (element.contactNumber === parseInt(body.contactNumber)) {
+                        return res.status(400).json({ message: "Contact Number Already Exits" });
+                    }
+                    if (element.email === body.email) {
+                        return res.status(400).json({ message: "Contact EmailF Already Exits" });
+                    }
+                };
             }
         };
-        const existingUserEmail = await usersService.getUserData({ where: { email: req.body.email } });
-        if (req.body.hasOwnProperty("email")) {
-            if (existingUserEmail == null) {
-                update.email = req.body.email;
-            } else {
-                update.email = existingUserEmail.email;
-            }
-        };
-        update.updated_at = new Date();
-        await usersService.updateUser(existingUserData.id, update);
+        update.updated_at = new Date(),
+            await usersService.updateUser(existingUserData.id, update);
         res.status(200).json(update);
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' })
