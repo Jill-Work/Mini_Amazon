@@ -10,19 +10,20 @@ exports.getUserData = async (condition) => {
 
 // get users
 exports.getUsersList = async (condition) => {
-    return await model.users.findAll(condition);
+    const data = await model.users.findAll(condition);
+    return common.nullCheckWithOutDataValues(data);
 };
 
 // sign up users
 exports.creteUser = async (data) => {
-    const { dataValues } = await model.users.create(data);
-    return dataValues;
+    const newUserData = await model.users.create(data);
+    return common.nullCheckWithDataValues(newUserData);
 };
 
 // update users
 exports.updateUser = async (id, update) => {
-    const { dataValues } = await model.users.update(update, { where: { id } });
-    return dataValues;
+    const data = await model.users.update(update, { where: { id } });
+    return common.nullCheckWithOutDataValues(data);
 };
 
 // delete users
@@ -41,7 +42,8 @@ exports.listOfRoute = async (operationsName,role) => {
     if (role) {
         condition = {where:{role}}
     };
-    return await model.permission.findAll(condition);
+    const listOfPermission = await model.permission.findAll(condition);
+    return common.nullCheckWithOutDataValues(listOfPermission);
 };
 
 //find one route or permission name

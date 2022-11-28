@@ -17,7 +17,7 @@ exports.getOrder = async (req, res) => {
 //  create order
 exports.createOrder = async (req, res) => {
     try {
-        const sumOfCartValue = await cartService.sum("total", { where: { buyerId: "27a365ab-a224-4af0-b3fa-bd54d4460a1c" } });
+        const sumOfCartValue = await cartService.sum("total", { where: { buyerId } });
         const orderData = {
             buyerId: req.user.id,
             address: req.body.address,
@@ -25,23 +25,24 @@ exports.createOrder = async (req, res) => {
             total: sumOfCartValue,
         };
         const finalOrder = await orderService.createOrder(orderData);
-        console.log(finalOrder);
         const cartItems = await cartService.getCartAllProduct(req.user.id);
         for (let i = 0; i < cartItems.length; i++) {
-        const element = cartItems[i];
-        const productDetails = await productService.getOneProduct(element.productId);
+            const element = cartItems[i];
+            const productDetails = await productService.getProduct(element.productId);
             const orderProduct = {
                 orderId: finalOrder.id,
                 sellerId: cartItems[i].sellerId,
                 productId: cartItems[i].productId,
                 quantity: cartItems[i].quantity,
                 price: productDetails.price,
-                total: cartItems[i].quantity * productDetails.price
+                total: cartItems[i].quantity * productDetails.price,    
             };
+            const stockUpdate = productDetails.stock - cartItems[i].quantity;
+            await productService.updateStock(id, stockUpdate );
             await orderService.createOrderProduct(orderProduct);
             await cartService.deleteFromCart(req.user.id, cartItems[i].productId);
         };
-        res.status(200).json({message: 'Your order placed successfully, Thankyou for shopping visit again.'});
+        res.status(200).json({ message: 'Your order placed successfully, Thankyou for shopping visit again.' });
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' });
     }

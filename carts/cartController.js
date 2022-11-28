@@ -17,7 +17,7 @@ exports.addAndUpdateToCart = async (req, res) => {
     try {
         const { productId, quantity } = req.query;
         const buyerId = req.user.id;
-        const getProduct = await productService.getOneProduct(productId);
+        const getProduct = await productService.getProduct(productId);
         if (getProduct) {
             const cartData = {
                 buyerId: buyerId,
