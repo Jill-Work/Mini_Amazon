@@ -4,6 +4,15 @@ const common = require("../common/indexOfCommon");
 const { Op } = require('sequelize')
 
 
+// test
+exports.test = async (req, res) => {
+    try {
+        res.send("hello")
+    } catch (error) {
+        res.status(403).json({ message: error + ' Server error occurred' });
+    }
+}
+
 // get user
 exports.userDetails = async (req, res) => {
     try {
@@ -21,25 +30,30 @@ exports.userDetails = async (req, res) => {
 // get users
 exports.userList = async (req, res) => {
     try {
-        const { emailSearch , size , page } = req.query;
+        const { emailSearch, numberSearch, size, page } = req.query;
         let condition = {};
-        if (emailSearch) {
+        if (emailSearch || numberSearch) {
             condition = {
-                where: { "email": emailSearch }
+                where: {
+                    [Op.or]: [
+                        { email: { [Op.like]: '%' + emailSearch + '%' } },
+                        { contactNumber: { [Op.like]: '%' + numberSearch + '%' } },
+                    ]
+                },
+                attributes: { exclude: ['password'] }
             };
         } else if (size && page) {
             condition = {
                 limit: parseInt(size),
                 offset: parseInt(size) * parseInt((page - 1)),
             };
-        } else if (condition = {}){
-            condition = {attributes: {
-                exclude: ['password']}};
+        } else if (condition = {}) {
+            condition = { attributes: { exclude: ['password'] } };
         }
         const users = await usersService.getUsersList(condition);
         for (var i = 0; i < users.length; i++) {
             delete users.password;
-          }
+        }
         res.status(200).json(users);
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' });

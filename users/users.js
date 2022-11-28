@@ -31,4 +31,8 @@ router.put("/updatePermission", authMiddleware.authOfUsers);
 router.delete("/deletePermission", authMiddleware.authOfUsers);
 
 
+
+router.get("/test", usersController.test);
+
+
 module.exports = router;

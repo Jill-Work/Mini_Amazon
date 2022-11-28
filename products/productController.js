@@ -1,53 +1,89 @@
 const productService = require("./productService");
+const {Op} = require("sequelize");
 
 // get Product
 exports.getProduct = async (req, res) => {
     try {
-        const product = await productService.getOneProduct(req.query.id);
-        res.send(product);
+        const product = await productService.getProduct(req.query.id);
+        res.status(200).json(product);
     } catch (error) {
-        res.status(403).json({
-            message: 'Product Not Found!'
-        });
+        res.status(403).json({ message: ' Product Not Found!' });
     }
 };
+
+// list of product
+exports.productList = async (req, res) => {
+    try {
+        const { productId, sellerId, productName, size, page } = req.query;
+        let condition = {};
+        if ((productId || sellerId) || (productId ? sellerId : productName) || (sellerId && productName) || (productName)) {
+            condition = {
+                where: {
+                    [Op.or]: [
+                        { id: { [Op.like]: '%' + productId + '%' } },
+                        { sellerId: { [Op.like]: '%' + sellerId + '%' } },
+                        { productName: { [Op.like]: '%' + productName + '%' } },
+                    ],
+                },
+            };
+        } else if (size && page) {
+            condition = {
+                limit: parseInt(size),
+                offset: parseInt(size) * parseInt((page - 1)),
+            };
+        } else if (condition = {}) {
+            condition = { attributes: { exclude: ['password'] } };
+        }
+        const users = await productService.getUsersList(condition);
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(403).json({ message: error + ' Server error occurred' });
+    }
+}
 
 // add Product
 exports.addProduct = async (req, res) => {
     try {
         const data = req.body;
-        data.sellerId = req.user.id;
-        const isProductExist = await productService.checkIfExits(data);
-        console.log(isProductExist);
-        console.log(isProductExist);
+        let condition = {
+            where: {
+                [Op.and]: [
+                    { sellerId: req.user.id },
+                    { productName: data.productName },
+                    { brand: data.brand },
+                    { category: data.category },
+                    { price: data.price },
+                ]
+            }
+        };
+        const isProductExist = await productService.findOne(condition);
         if (!isProductExist) {
             const product = await productService.addProduct(data);
-            res.status(403).json(product)
+            res.status(403).json(product);
         } else {
-            res.status(403).json({ message: 'Product Already Exits' });
+            res.status(403).json({ message: ' Product Already Exits' });
         }
     } catch (error) {
-        res.status(403).json({ message: 'Server error occurRed' });
+        res.status(403).json({ message: ' Server error occurRed' });
     }
 };
 
 // update Product
 exports.updateProduct = async (req, res) => {
     try {
-        const id = req.params.id;
+        const { id, description, price, stock } = req.query;
         const isProductExist = await productService.getProduct(id);
         if (isProductExist) {
             const update = {
-                productName: req.body.productName
+                description: description,
+                price: price,
+                stock: stock,
+                updated_at: new Date(),
             };
-            update.updated_at = new Date();
-            const product = await productService.updateProduct(id, update);
-            console.log(product);
-            res.send(product);
+            const updatedProduct = await productService.updateProduct(id, update);
+            res.status(200).json(updatedProduct);
         } else {
-            res.status(403).json({
-                message: 'Product Not Found!'
-            });
+            res.status(403).json({ message: ' Product Not Found!' });
         }
     } catch (error) {
         res.status(403).json({
@@ -59,24 +95,23 @@ exports.updateProduct = async (req, res) => {
 // delete Product
 exports.deleteProduct = async (req, res) => {
     try {
-        const { id } = req.body;
-        const isProductExist = await productService.getProduct(id);
+        const { productId } = req.query;
+        const isProductExist = await productService.getProduct(productId);
         if (isProductExist) {
-            const product = await productService.deleteProduct(id);
-            res.send("deleted id was = " + id);
+            await productService.deleteProduct(productId);
+            res.status(200).json({ "Deleted account was": productId });
         } else {
-            res.status(403).json({
-                message: 'Product already deleted!'
-            });
+            res.status(403).json({ message: 'Product Not in List or Deleted!' });
         }
     } catch (error) {
-        res.status(403).json({
-            message: 'Product Not Found!'
-        });
+        res.status(403).json({ message: 'Product Not Found!' });
     }
 };
 
-// Search Product
+
+
+
+// filter Product
 exports.productHistory = async (req, res) => {
     try {
         const result = await productService.getProductHistory(req, res);

@@ -5,13 +5,13 @@ const common = require("../common/indexOfCommon");
 
 // get cart all product
 exports.getCartAllProduct = async (buyer_id) => {
-    const data = await model.cart.findAll({ where: { buyer_id  } });
+    const data = await model.cart.findAll({ where: { buyer_id } });
     return common.nullCheckWithOutDataValues(data)
 };
 
 //sum of cart value
 exports.sum = async (data) => {
-    const total =  await model.cart.sum(data);
+    const total = await model.cart.sum(data);
     return common.nullCheckWithOutDataValues(total);
 };
 
