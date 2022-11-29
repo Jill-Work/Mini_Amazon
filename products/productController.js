@@ -30,11 +30,12 @@ exports.productList = async (req, res) => {
             condition = {
                 limit: parseInt(size),
                 offset: parseInt(size) * parseInt((page - 1)),
+                attributes: { exclude: ['password'] },
             };
         } else if (condition = {}) {
             condition = { attributes: { exclude: ['password'] } };
         }
-        const users = await productService.getUsersList(condition);
+        const users = await productService.getProductList(condition);
         res.status(200).json(users);
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' });
@@ -99,7 +100,7 @@ exports.deleteProduct = async (req, res) => {
         const isProductExist = await productService.getProduct(productId);
         if (isProductExist) {
             await productService.deleteProduct(productId);
-            res.status(200).json({ "Deleted account was": productId });
+            res.status(200).json({ "Deleted account was = ": productId });
         } else {
             res.status(403).json({ message: 'Product Not in List or Deleted!' });
         }

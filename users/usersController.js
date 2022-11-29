@@ -1,7 +1,13 @@
 const usersService = require("./usersServices");
 const bcrypt = require('bcrypt');
 const common = require("../common/indexOfCommon");
-const { Op } = require('sequelize')
+const { Op } = require('sequelize');
+const Redis = require('redis');
+
+const redisClient = Redis.createClient();
+redisClient.on('connect',()=>{
+    console.log("connect to redis ");
+})
 
 
 // test
@@ -16,13 +22,40 @@ exports.test = async (req, res) => {
 // get user
 exports.userDetails = async (req, res) => {
     try {
-        const { id } = req.params;
+        await redisClient.connect();
         const existingUser = await usersService.getUserData({
-            where: { id },
+            where: { id: req.user.id },
             attributes: { exclude: ['password'] },
         });
-        res.status(200).json(existingUser);
+        await redisClient.setEx('userData', REDIS_EXPIRE, JSON.stringify(existingUser));
+
+        const getUser = await redisClient.get('userData');
+        await redisClient.quit();
+        return res.json(JSON.parse(getUser))
+        // redisClient.get('userData', async (error, data) => {
+        //     console.log('sample----',error, data);
+        //     if (error) {
+        //         res.send("error = ", error)
+        //     }
+        //     if (data != null) {
+        //         console.log("hit");
+        //         await redisClient.quit(data);
+        //         return res.send(data)
+        //     } else {
+        //         console.log("hit miss");
+        //         const existingUser = await usersService.getUserData({
+        //             where: { id: req.user.id },
+        //             attributes: { exclude: ['password'] },
+        //         });
+        //         redisClient.setex('userData', REDIS_EXPIRE, JSON.stringify(existingUser));
+        //         console.log(REDIS_EXPIRE);
+        //         await redisClient.quit(data);
+        //         res.status(200).json(existingUser);
+        //     }
+        // })
+
     } catch (error) {
+        console.log("error", error)
         res.status(403).json({ message: error + ' Server error occurred' });
     }
 };

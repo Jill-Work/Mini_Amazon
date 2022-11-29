@@ -38,7 +38,7 @@ exports.createOrder = async (req, res) => {
                 total: cartItems[i].quantity * productDetails.price,    
             };
             const stockUpdate = productDetails.stock - cartItems[i].quantity;
-            await productService.updateStock(id, stockUpdate );
+            await productService.updateProduct(id, stockUpdate );
             await orderService.createOrderProduct(orderProduct);
             await cartService.deleteFromCart(req.user.id, cartItems[i].productId);
         };
