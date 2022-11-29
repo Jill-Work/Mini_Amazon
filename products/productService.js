@@ -10,7 +10,7 @@ exports.getProduct = async (id) => {
 };
 
 // list of product
-exports.productList = async (condition) => {
+exports.getProductList = async (condition) => {
     const data = findAll(condition)
     return common.nullCheckWithOutDataValues(data)
 };
@@ -21,7 +21,7 @@ exports.addProduct = async (data) => {
 };
 
 // update stock ,  price
-exports.updateStock = async (id, update) => {
+exports.updateProduct = async (id, update) => {
     return await model.product.update({ update }, { where: { id } });
 };
 
@@ -42,8 +42,9 @@ exports.getProductHistory = async (req, res) => {
                 { productName: { [Op.like]: '%' + search + '%' } },
             ],
         }
-
+        
     }
+
     if (filters) {
         if (filters.category) {
             where = {
