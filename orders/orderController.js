@@ -1,12 +1,14 @@
 const orderService = require("./orderService");
 const cartService = require("../carts/cartService");
 const productService = require("../products/productService");
+const cacheData = require("../requests/usersCacheRequest")
 
 
 //  get order
 exports.getOrder = async (req, res) => {
     try {
         const getOrderDetails = await orderService.getOrderDetails(req.user.id);
+        await cacheData.getCacheData(req.user.id);
         res.status(200).json(getOrderDetails);
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' });
@@ -35,10 +37,11 @@ exports.createOrder = async (req, res) => {
                 productId: cartItems[i].productId,
                 quantity: cartItems[i].quantity,
                 price: productDetails.price,
-                total: cartItems[i].quantity * productDetails.price,    
+                total: cartItems[i].quantity * productDetails.price,
             };
             const stockUpdate = productDetails.stock - cartItems[i].quantity;
-            await productService.updateProduct(id, stockUpdate );
+            await productService.updateProduct(productDetails.id, stockUpdate);
+            // await cacheData.setCacheData();
             await orderService.createOrderProduct(orderProduct);
             await cartService.deleteFromCart(req.user.id, cartItems[i].productId);
         };

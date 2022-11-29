@@ -1,19 +1,32 @@
 const usersService = require("./usersServices");
+const userCache = require("../requests/usersCacheRequest");
 const bcrypt = require('bcrypt');
 const common = require("../common/indexOfCommon");
 const { Op } = require('sequelize');
-const Redis = require('redis');
-
-const redisClient = Redis.createClient();
-redisClient.on('connect',()=>{
-    console.log("connect to redis ");
-})
 
 
 // test
 exports.test = async (req, res) => {
     try {
-        res.send("hello")
+        const userCacheData = await userCache.getCacheData(req.query.id);
+
+        if (userCacheData != null) {
+            return res.json(JSON.parse(userCacheData))
+        } else {
+            let condition = {};
+            if (req.query.id) {
+                condition = {
+                    where: { id: req.query.id },
+                    attributes: { exclude: ['password'] },
+                }
+            } else {
+                condition = { attributes: { exclude: ['password'] } }
+            }
+            const existingUser = await usersService.getUsersList(condition);
+            await userCache.setCacheData(req.query.id, existingUser);
+            return res.send(existingUser)
+        }
+
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' });
     }
@@ -22,40 +35,18 @@ exports.test = async (req, res) => {
 // get user
 exports.userDetails = async (req, res) => {
     try {
-        await redisClient.connect();
-        const existingUser = await usersService.getUserData({
-            where: { id: req.user.id },
-            attributes: { exclude: ['password'] },
-        });
-        await redisClient.setEx('userData', REDIS_EXPIRE, JSON.stringify(existingUser));
-
-        const getUser = await redisClient.get('userData');
-        await redisClient.quit();
-        return res.json(JSON.parse(getUser))
-        // redisClient.get('userData', async (error, data) => {
-        //     console.log('sample----',error, data);
-        //     if (error) {
-        //         res.send("error = ", error)
-        //     }
-        //     if (data != null) {
-        //         console.log("hit");
-        //         await redisClient.quit(data);
-        //         return res.send(data)
-        //     } else {
-        //         console.log("hit miss");
-        //         const existingUser = await usersService.getUserData({
-        //             where: { id: req.user.id },
-        //             attributes: { exclude: ['password'] },
-        //         });
-        //         redisClient.setex('userData', REDIS_EXPIRE, JSON.stringify(existingUser));
-        //         console.log(REDIS_EXPIRE);
-        //         await redisClient.quit(data);
-        //         res.status(200).json(existingUser);
-        //     }
-        // })
-
+        const userCacheData = await userCache.getCacheData(req.query.id);
+        if (userCacheData != null) {
+            return res.json(JSON.parse(userCacheData))
+        } else {
+            const existingUser = await usersService.getUsersList({
+                where: { id: req.query.id },
+                attributes: { exclude: ['password'] },
+            });
+            // await userCache.setCacheData(req.query.id, existingUser);
+            return res.status(200).json(existingUser);
+        }
     } catch (error) {
-        console.log("error", error)
         res.status(403).json({ message: error + ' Server error occurred' });
     }
 };
@@ -96,8 +87,8 @@ exports.userList = async (req, res) => {
 //  Sign Up
 exports.userSignUp = async (req, res) => {
     try {
-        const values = ['BUYER', 'SELLER']
-        await common.createNewUser(req, res, values)
+        const values = ['BUYER', 'SELLER'];
+        await common.createNewUser(req, res, values);
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' });
     }
@@ -106,7 +97,7 @@ exports.userSignUp = async (req, res) => {
 // log in
 exports.userLogIn = async (req, res) => {
     try {
-        const { password, email, role } = req.body;
+        const { password, email } = req.body;
         const users = await usersService.getUserData({ where: { email } });
         if (!users) return res.status(404).json({ error: "invalid details check again" });
         console.log(users);
@@ -169,7 +160,8 @@ exports.userUpdate = async (req, res) => {
             }
         };
         update.updated_at = new Date(),
-            await usersService.updateUser(existingUserData.id, update);
+        await usersService.updateUser(existingUserData.id, update);
+        // await userCache.setCacheData(existingUserData.id, update);
         res.status(200).json(update);
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' })
@@ -210,6 +202,7 @@ exports.userDelete = async (req, res) => {
     try {
         const email = req.query.email;
         await usersService.deleteUser(email);
+        await userCache.deleteCacheData(req.query.id, existingUser);
         res.status(200).json({ "Deleted account was": email });
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' });
@@ -266,8 +259,9 @@ exports.addRoute = async (req, res) => {
 //delete route permission
 exports.deleteRoute = async () => {
     try {
-        await usersService.deletePermission(id);
-        res.status(200).json({ "Deleted id was": id });
+        const { operationsName, role } = req.query;
+        await usersService.deletePermission(operationsName, role);
+        res.status(200).json({ "Deleted id was": req.query.id });
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' });
     }

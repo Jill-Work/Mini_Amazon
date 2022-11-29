@@ -1,10 +1,13 @@
 const productService = require("./productService");
-const {Op} = require("sequelize");
+const cacheData = require("../requests/usersCacheRequest")
+const { Op } = require("sequelize");
 
 // get Product
 exports.getProduct = async (req, res) => {
     try {
-        const product = await productService.getProduct(req.query.id);
+        const { id } = req.query;
+        const product = await productService.getProduct(id);
+        await cacheData.getCacheData(id, product);
         res.status(200).json(product);
     } catch (error) {
         res.status(403).json({ message: ' Product Not Found!' });
@@ -60,6 +63,7 @@ exports.addProduct = async (req, res) => {
         const isProductExist = await productService.findOne(condition);
         if (!isProductExist) {
             const product = await productService.addProduct(data);
+            await cacheData.setCacheData(product.id, product);
             res.status(403).json(product);
         } else {
             res.status(403).json({ message: ' Product Already Exits' });
@@ -82,6 +86,7 @@ exports.updateProduct = async (req, res) => {
                 updated_at: new Date(),
             };
             const updatedProduct = await productService.updateProduct(id, update);
+            await cacheData.setCacheData(id, update);
             res.status(200).json(updatedProduct);
         } else {
             res.status(403).json({ message: ' Product Not Found!' });
@@ -100,6 +105,7 @@ exports.deleteProduct = async (req, res) => {
         const isProductExist = await productService.getProduct(productId);
         if (isProductExist) {
             await productService.deleteProduct(productId);
+            await cacheData.deleteCacheData(productId);
             res.status(200).json({ "Deleted account was = ": productId });
         } else {
             res.status(403).json({ message: 'Product Not in List or Deleted!' });
