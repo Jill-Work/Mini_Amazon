@@ -26,9 +26,7 @@ router.get("/listOfPermission", authMiddleware.authOfUsers ,usersController.list
 
 router.post("/addPermission", authMiddleware.authOfUsers , usersController.addRoute);
 
-router.put("/updatePermission", authMiddleware.authOfUsers);
-
-router.delete("/deletePermission", authMiddleware.authOfUsers);
+router.delete("/deletePermission", authMiddleware.authOfUsers, usersController.deleteRoute);
 
 
 

@@ -34,13 +34,13 @@ exports.deleteUser = async (email) => {
 
 
 // list of permission route
-exports.listOfRoute = async (operationsName,role) => {
+exports.listOfRoute = async (operationsName, role) => {
     let condition = {};
-    if(operationsName){
-        condition = {where:{operationsName}}
+    if (operationsName) {
+        condition = { where: { operationsName } }
     };
     if (role) {
-        condition = {where:{role}}
+        condition = { where: { role } }
     };
     const listOfPermission = await model.permission.findAll(condition);
     return common.nullCheckWithOutDataValues(listOfPermission);
@@ -53,13 +53,13 @@ exports.findOnePermission = async (condition) => {
 };
 
 // add permission route
-exports.addPermission = async ({operationsName,role,routes}) => {
-    const bodyData = {operationsName,role,routes};
+exports.addPermission = async ({ operationsName, role, routes }) => {
+    const bodyData = { operationsName, role, routes };
     const data = await model.permission.create(bodyData);
     return common.nullCheckWithDataValues(data);
 };
 
 //delete permission route
-exports.deletePermission = async (id) => {
-    return await model.users.destroy({ where: { id } });
+exports.deletePermission = async (operationsName, role) => {
+    return await model.users.destroy({ where: { operationsName, role } });
 };
