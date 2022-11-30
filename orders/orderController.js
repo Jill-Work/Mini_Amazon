@@ -1,7 +1,7 @@
 const orderService = require("./orderService");
 const cartService = require("../carts/cartService");
 const productService = require("../products/productService");
-const cacheData = require("../requests/usersCacheRequest")
+const cacheData = require("../requests/usersCacheRequest");
 
 
 //  get order
@@ -41,7 +41,6 @@ exports.createOrder = async (req, res) => {
             };
             const stockUpdate = productDetails.stock - cartItems[i].quantity;
             await productService.updateProduct(productDetails.id, stockUpdate);
-            // await cacheData.setCacheData();
             await orderService.createOrderProduct(orderProduct);
             await cartService.deleteFromCart(req.user.id, cartItems[i].productId);
         };

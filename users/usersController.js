@@ -10,13 +10,13 @@ exports.userDetails = async (req, res) => {
     try {
         const userCacheData = await userCache.getCacheData(req.query.id);
         if (userCacheData != null) {
-            return res.json(JSON.parse(userCacheData))
+            return res.json(JSON.parse(userCacheData));
         } else {
             const existingUser = await usersService.getUsersList({
                 where: { id: req.query.id },
                 attributes: { exclude: ['password'] },
             });
-            // await userCache.setCacheData(req.query.id, existingUser);
+            await userCache.setCacheData(req.query.id, existingUser);
             return res.status(200).json(existingUser);
         }
     } catch (error) {
@@ -115,7 +115,6 @@ exports.userUpdate = async (req, res) => {
         if (existingUserData.contactNumber === parseInt(body.contactNumber)) {
             update.contactNumber = parseInt(body.contactNumber);
         }
-
         const existingContactNumberOrEmail = await usersService.getUsersList({
             where: {
                 [Op.or]: [
@@ -143,7 +142,6 @@ exports.userUpdate = async (req, res) => {
         update.updated_at = new Date();
         const updatedData = await usersService.updateUser(existingUserData.id, update);
         const token = common.tokenJwt(updatedData);
-        await userCache.setCacheData(existingUserData.id, updatedData);
         res.status(200).json({ ...updatedData, token });
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' })
@@ -165,7 +163,7 @@ exports.userPasswordChange = async (req, res) => {
                     const salt = await bcrypt.genSalt(10);
                     update.password = await bcrypt.hash(newPassword, salt);
                     update.updated_at = new Date();
-                    await usersService.updateUser(email, update);
+                    await usersService.updateUser(user.id, update);
                     res.status(200).json({ Message: "Your password is updated successfully" });
                 } else {
                     res.status(400).json({ Message: "Your password is incorrect" });
