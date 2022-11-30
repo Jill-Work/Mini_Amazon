@@ -1,11 +1,10 @@
 const model = require("../models/db");
-const Sequelize = require("sequelize");
 const common = require("../common/indexOfCommon");
-const Op = Sequelize.Op;
+const { Op } = require("sequelize");
 
 // get product
 exports.getProduct = async (id) => {
-    const data = await model.product.findOne({where : id});
+    const data = await model.product.findOne({ where: { id } });
     return common.nullCheckWithDataValues(data);
 };
 
@@ -42,7 +41,7 @@ exports.getProductHistory = async (req, res) => {
                 { productName: { [Op.like]: '%' + search + '%' } },
             ],
         }
-        
+
     }
 
     if (filters) {

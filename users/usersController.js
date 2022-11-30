@@ -5,33 +5,6 @@ const common = require("../common/indexOfCommon");
 const { Op } = require('sequelize');
 
 
-// test
-exports.test = async (req, res) => {
-    try {
-        const userCacheData = await userCache.getCacheData(req.query.id);
-
-        if (userCacheData != null) {
-            return res.json(JSON.parse(userCacheData))
-        } else {
-            let condition = {};
-            if (req.query.id) {
-                condition = {
-                    where: { id: req.query.id },
-                    attributes: { exclude: ['password'] },
-                }
-            } else {
-                condition = { attributes: { exclude: ['password'] } }
-            }
-            const existingUser = await usersService.getUsersList(condition);
-            await userCache.setCacheData(req.query.id, existingUser);
-            return res.send(existingUser)
-        }
-
-    } catch (error) {
-        res.status(403).json({ message: error + ' Server error occurred' });
-    }
-}
-
 // get user
 exports.userDetails = async (req, res) => {
     try {

@@ -1,6 +1,5 @@
 const cartService = require("./cartService");
 const productService = require("../products/productService");
-const cacheData = require("../requests/usersCacheRequest")
 
 
 //  get cart
