@@ -1,7 +1,6 @@
 const model = require("../models/db");
-const Sequelize = require("sequelize");
 const common = require("../common/indexOfCommon");
-const Op = Sequelize.Op;
+const { Op } = require("sequelize");
 
 // get product
 exports.getProduct = async (id) => {
