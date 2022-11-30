@@ -18,7 +18,7 @@ exports.getProductList = async (condition) => {
 // insert product
 exports.addProduct = async (data) => {
     const newProduct = await model.product.create(data);
-    await cacheData.setCacheData(`productCache${newProduct.dataValues.id}`, data);
+    await cacheData.setCacheData(newProduct.dataValues.id, data);
     return common.nullCheckWithOutDataValues(data);
 };
 
@@ -26,7 +26,7 @@ exports.addProduct = async (data) => {
 exports.updateProduct = async (id, update) => {
     await model.users.update(update, { where: { id } });
     const data = await model.users.findOne({ where: { id } });
-    await cacheData.setCacheData(`productCache${data.dataValues.id}`, data);
+    await cacheData.setCacheData(data.dataValues.id, data);
     return common.nullCheckWithDataValues(data);
 };
 
