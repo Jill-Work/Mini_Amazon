@@ -22,8 +22,9 @@ exports.creteUser = async (data) => {
 
 // update users
 exports.updateUser = async (id, update) => {
-    const data = await model.users.update(update, { where: { id } });
-    return common.nullCheckWithOutDataValues(data);
+    await model.users.update(update, { where: { id } });
+    const data = await model.users.findOne({ where: { id },attributes: { exclude: ['password'] }, })
+    return common.nullCheckWithDataValues(data);
 };
 
 // delete users
