@@ -5,7 +5,7 @@ const Op = Sequelize.Op;
 
 // get product
 exports.getProduct = async (id) => {
-    const data = await model.product.findOne({where : id});
+    const data = await model.product.findOne({ where: { id } });
     return common.nullCheckWithDataValues(data);
 };
 
@@ -42,7 +42,7 @@ exports.getProductHistory = async (req, res) => {
                 { productName: { [Op.like]: '%' + search + '%' } },
             ],
         }
-        
+
     }
 
     if (filters) {
