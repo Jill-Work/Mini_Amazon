@@ -1,6 +1,7 @@
 const model = require("../models/db");
 const common = require("../common/indexOfCommon");
 const { Op } = require("sequelize");
+const cacheData = require("../requests/usersCacheRequest");
 
 // get product
 exports.getProduct = async (id) => {
@@ -11,17 +12,22 @@ exports.getProduct = async (id) => {
 // list of product
 exports.getProductList = async (condition) => {
     const data = findAll(condition)
-    return common.nullCheckWithOutDataValues(data)
+    return common.nullCheckWithOutDataValues(data);
 };
 
 // insert product
 exports.addProduct = async (data) => {
-    return await model.product.create(data);
+    const newProduct = await model.product.create(data);
+    await cacheData.setCacheData(`productCache${newProduct.dataValues.id}`, data);
+    return common.nullCheckWithOutDataValues(data);
 };
 
 // update stock ,  price
 exports.updateProduct = async (id, update) => {
-    return await model.product.update({ update }, { where: { id } });
+    await model.users.update(update, { where: { id } });
+    const data = await model.users.findOne({ where: { id } });
+    await cacheData.setCacheData(`productCache${data.dataValues.id}`, data);
+    return common.nullCheckWithDataValues(data);
 };
 
 // delete product

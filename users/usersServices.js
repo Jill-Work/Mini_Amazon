@@ -1,5 +1,6 @@
 const model = require("../models/db");
 const common = require("../common/indexOfCommon");
+const userCache = require("../requests/usersCacheRequest");
 
 
 //get user
@@ -17,13 +18,17 @@ exports.getUsersList = async (condition) => {
 // sign up users
 exports.creteUser = async (data) => {
     const newUserData = await model.users.create(data);
+    delete newUserData.dataValues.password;
+    await userCache.setCacheData(`userCache${newUserData.dataValues.id}`, newUserData.dataValues);
     return common.nullCheckWithDataValues(newUserData);
 };
 
 // update users
 exports.updateUser = async (id, update) => {
-    const data = await model.users.update(update, { where: { id } });
-    return common.nullCheckWithOutDataValues(data);
+    await model.users.update(update, { where: { id } });
+    const data = await model.users.findOne({ where: { id },attributes: { exclude: ['password'] }, });
+    await userCache.setCacheData(`userCache${data.dataValues.id}`, data.dataValues);
+    return common.nullCheckWithDataValues(data);
 };
 
 // delete users

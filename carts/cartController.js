@@ -1,7 +1,6 @@
 const cartService = require("./cartService");
 const productService = require("../products/productService");
 
-
 //  get cart
 exports.getCartAllProduct = async (req, res) => {
     try {
@@ -26,7 +25,7 @@ exports.addAndUpdateToCart = async (req, res) => {
                 price: getProduct.price,
                 quantity: quantity,
                 total: getProduct.price * quantity,
-                updated_at : new Date(),
+                updated_at: new Date(),
             };
             const data = await cartService.addAndUpdateToCart(cartData, buyerId, productId, parseInt(quantity));
             res.status(200).json(data);

@@ -10,13 +10,13 @@ exports.userDetails = async (req, res) => {
     try {
         const userCacheData = await userCache.getCacheData(req.query.id);
         if (userCacheData != null) {
-            return res.json(JSON.parse(userCacheData))
+            return res.json(JSON.parse(userCacheData));
         } else {
             const existingUser = await usersService.getUsersList({
                 where: { id: req.query.id },
                 attributes: { exclude: ['password'] },
             });
-            // await userCache.setCacheData(req.query.id, existingUser);
+            await userCache.setCacheData(req.query.id, existingUser);
             return res.status(200).json(existingUser);
         }
     } catch (error) {
@@ -99,13 +99,21 @@ exports.userLogIn = async (req, res) => {
 exports.userUpdate = async (req, res) => {
     try {
         const body = req.body;
-        const existingUserData = await usersService.getUserData({ where: { id: req.user.id } });
+        const tokenId = req.user.id;
+        const existingUserData = await usersService.getUserData({ where: { id: tokenId } });
+
         let update = {};
         if (body.firstName.length != 0) {
             update.firstName = body.firstName;
         }
         if (body.lastName.length != 0) {
             update.lastName = body.lastName;
+        }
+        if (existingUserData.email === body.email) {
+            update.email = body.email;
+        }
+        if (existingUserData.contactNumber === parseInt(body.contactNumber)) {
+            update.contactNumber = parseInt(body.contactNumber);
         }
         const existingContactNumberOrEmail = await usersService.getUsersList({
             where: {
@@ -115,27 +123,26 @@ exports.userUpdate = async (req, res) => {
                 ]
             }
         });
-
         if ((req.body.hasOwnProperty("contactNumber")) || (req.body.hasOwnProperty("email"))) {
-            if (existingContactNumberOrEmail.length == 0) {
-                update.contactNumber = body.contactNumber;
+            if ((existingContactNumberOrEmail.length == 0) || (existingContactNumberOrEmail[0].id === tokenId)) {
+                update.contactNumber = parseInt(body.contactNumber);
                 update.email = body.email;
             } else {
                 for (let i = 0; i < existingContactNumberOrEmail.length; i++) {
                     const element = existingContactNumberOrEmail[i];
-                    if (element.contactNumber === parseInt(body.contactNumber)) {
+                    if ((element.id != tokenId) && (element.contactNumber === parseInt(body.contactNumber))) {
                         return res.status(400).json({ message: "Contact Number Already Exits" });
                     }
-                    if (element.email === body.email) {
-                        return res.status(400).json({ message: "Contact EmailF Already Exits" });
+                    if ((element.id != tokenId) && (element.email === body.email)) {
+                        return res.status(400).json({ message: "Contact Email Already Exits" });
                     }
                 };
             }
         };
-        update.updated_at = new Date(),
-        await usersService.updateUser(existingUserData.id, update);
-        // await userCache.setCacheData(existingUserData.id, update);
-        res.status(200).json(update);
+        update.updated_at = new Date();
+        const updatedData = await usersService.updateUser(existingUserData.id, update);
+        const token = common.tokenJwt(updatedData);
+        res.status(200).json({ ...updatedData, token });
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' })
     }
@@ -156,7 +163,7 @@ exports.userPasswordChange = async (req, res) => {
                     const salt = await bcrypt.genSalt(10);
                     update.password = await bcrypt.hash(newPassword, salt);
                     update.updated_at = new Date();
-                    await usersService.updateUser(email, update);
+                    await usersService.updateUser(user.id, update);
                     res.status(200).json({ Message: "Your password is updated successfully" });
                 } else {
                     res.status(400).json({ Message: "Your password is incorrect" });
