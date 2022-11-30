@@ -19,7 +19,7 @@ exports.getUsersList = async (condition) => {
 exports.creteUser = async (data) => {
     const newUserData = await model.users.create(data);
     delete newUserData.dataValues.password;
-    await userCache.setCacheData(`userCache${newUserData.dataValues.id}`, newUserData.dataValues);
+    await userCache.setCacheData(newUserData.dataValues.id, newUserData.dataValues);
     return common.nullCheckWithDataValues(newUserData);
 };
 
@@ -27,7 +27,7 @@ exports.creteUser = async (data) => {
 exports.updateUser = async (id, update) => {
     await model.users.update(update, { where: { id } });
     const data = await model.users.findOne({ where: { id },attributes: { exclude: ['password'] }, });
-    await userCache.setCacheData(`userCache${data.dataValues.id}`, data.dataValues);
+    await userCache.setCacheData(data.dataValues.id, data.dataValues);
     return common.nullCheckWithDataValues(data);
 };
 

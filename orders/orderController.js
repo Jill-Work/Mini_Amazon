@@ -1,14 +1,13 @@
 const orderService = require("./orderService");
 const cartService = require("../carts/cartService");
 const productService = require("../products/productService");
-const cacheData = require("../requests/usersCacheRequest");
 
 
 //  get order
 exports.getOrder = async (req, res) => {
     try {
-        const getOrderDetails = await orderService.getOrderDetails(req.user.id);
-        await cacheData.getCacheData(req.user.id);
+        const orderId = req.user.id
+        const getOrderDetails = await orderService.getOrderDetails(orderId);
         res.status(200).json(getOrderDetails);
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' });

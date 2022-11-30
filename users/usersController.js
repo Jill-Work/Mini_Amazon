@@ -8,15 +8,16 @@ const { Op } = require('sequelize');
 // get user
 exports.userDetails = async (req, res) => {
     try {
-        const userCacheData = await userCache.getCacheData(req.query.id);
+        const userId = req.query.id;
+        const userCacheData = await userCache.getCacheData(userId);
         if (userCacheData != null) {
             return res.json(JSON.parse(userCacheData));
         } else {
             const existingUser = await usersService.getUsersList({
-                where: { id: req.query.id },
+                where: { id: userId },
                 attributes: { exclude: ['password'] },
             });
-            await userCache.setCacheData(req.query.id, existingUser);
+            await userCache.setCacheData(userId, existingUser);
             return res.status(200).json(existingUser);
         }
     } catch (error) {

@@ -6,12 +6,12 @@ const { Op } = require("sequelize");
 exports.getProduct = async (req, res) => {
     try {
         const { id } = req.query;
-        const productCache = await cacheData.getCacheData(`productCache${id}`, product);
+        const productCache = await cacheData.getCacheData(id, product);
         if (productCache != null) {
             return res.json(JSON.parse(productCache));
         } else {
             const product = await productService.getProduct(id);
-            await userCache.setCacheData(`productCache${id}`, product);
+            await userCache.setCacheData(id, product);
             res.status(200).json(product);
         }
     } catch (error) {
