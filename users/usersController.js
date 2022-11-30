@@ -99,8 +99,8 @@ exports.userLogIn = async (req, res) => {
 exports.userUpdate = async (req, res) => {
     try {
         const body = req.body;
-        const tokenId = tokenId;
-        const existingUserData = await usersService.getUserData({ where: { id: req.user.id } });
+        const tokenId = req.user.id;
+        const existingUserData = await usersService.getUserData({ where: { id: tokenId } });
 
         let update = {};
         if (body.firstName.length != 0) {
