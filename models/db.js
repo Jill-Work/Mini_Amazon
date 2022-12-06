@@ -5,7 +5,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 
 //      passing database = = db name , username , password , host  , dialect
 const sequelize = new Sequelize(DB_NAME, ROOT, PASSWORD, {
-    host: HOST_NAME,
+    host: "localhost",
     dialect: DIALECT,
     logging: false      // to log off in console
 });
