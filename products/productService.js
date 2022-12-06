@@ -71,9 +71,6 @@ exports.getProductHistory = async (req, res) => {
         }
 
     }
-
-
-
     let condition = {
         where,
         order: [
