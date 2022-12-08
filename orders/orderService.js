@@ -1,20 +1,21 @@
 const model = require("../models/db");
-const common = require("../common/common");
+const common = require("../common/indexOfCommon");
 
 
 // get order details
-exports. getOrderDetails = async (id) => {
-    return await model.order_product.findAll({ where: { order_id: id } });
+exports.getOrderDetails = async (buyer_id) => {
+    console.log(buyer_id);
+
+    return await model.order_product.findAll({ where: { buyer_id } });
 };
 
 //  create order
 exports.createOrder = async (orderData) => {
-    const data = await model.order.create(orderData);
-    return common.nullCheck(data);
+    return await model.order.create(orderData);
 };
 
 //   create order product
 exports.createOrderProduct = async (orderProduct) => {
     const data = await model.order_product.create(orderProduct);
-    return common.nullCheck(data);
+    return common.nullCheckWithDataValues(data);
 };

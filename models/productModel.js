@@ -1,43 +1,42 @@
 const { Sequelize } = require('sequelize');
 
-module.exports = (sequelize , DataTypes)=>{
+module.exports = (sequelize, DataTypes) => {
     const product = sequelize.define('products', {
-        id:{
-            type:DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true
+        id: {
+            type: Sequelize.UUID,
+            defaultValue: Sequelize.UUIDV4,
+            primaryKey: true,
         },
-        sellerId:{
-            type: Sequelize.UUID, 
+        sellerId: {
+            type: Sequelize.UUID,
             defaultValue: Sequelize.UUIDV4,
             model: 'user',
             key: 'id'
         },
         productName: {
-            type:DataTypes.STRING(100)
+            type: DataTypes.STRING(100)
         },
         image: {
-            type:DataTypes.STRING(100)
+            type: DataTypes.STRING(100)
         },
         brand: {
-            type:DataTypes.STRING(100)
+            type: DataTypes.STRING(100)
         },
         category: {
             type: DataTypes.ENUM,
-            values: ['Clothes','Laptops','Mobiles']
+            values: ['Clothes', 'Laptops', 'Mobiles']
         },
         description: {
-            type:DataTypes.STRING(100)
+            type: DataTypes.STRING(100)
         },
-        price : {
-            type:DataTypes.INTEGER,
+        price: {
+            type: DataTypes.INTEGER,
         },
         stock: {
-            type:DataTypes.INTEGER,
+            type: DataTypes.INTEGER,
         }
-    },{
-        timestamps:false,
-        underscored:true,
+    }, {
+        underscored: true,
     })
     return product;
 };

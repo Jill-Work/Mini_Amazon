@@ -4,9 +4,15 @@ const env = require("../.env")
 const { Sequelize, DataTypes } = require('sequelize');
 
 //      passing database = = db name , username , password , host  , dialect
+<<<<<<< feature-product-functionality
 const sequelize = new Sequelize( DB_NAME, ROOT, PASSWORD, {
     host : HOST_NAME,
     port : "3306",
+=======
+const sequelize = new Sequelize(DB_NAME, ROOT, PASSWORD, {
+    host: HOST_NAME,
+    port: '3306',
+>>>>>>> develop
     dialect: DIALECT,
     logging: false      // to log off in console
 });
@@ -20,7 +26,7 @@ db.sequelize = sequelize;
 db.users = require("./usersModel")(sequelize, DataTypes);
 db.product = require("./productModel")(sequelize, DataTypes);
 db.cart = require("./cartModel")(sequelize, DataTypes);
-db.routeAuth = require("./routeModel")(sequelize, DataTypes);
+db.permission = require("./permissionModel")(sequelize, DataTypes);
 db.order = require("./orderModel")(sequelize, DataTypes);
 db.order_product = require("./order_productModels")(sequelize, DataTypes);
 

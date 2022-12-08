@@ -1,40 +1,50 @@
 const orderService = require("./orderService");
 const cartService = require("../carts/cartService");
 const productService = require("../products/productService");
-const { localsName } = require("ejs");
 
 
 //  get order
 exports.getOrder = async (req, res) => {
-    const data = await orderService.getOrderDetails(id);
+    try {
+        const orderId = req.user.id
+        const getOrderDetails = await orderService.getOrderDetails(orderId);
+        res.status(200).json(getOrderDetails);
+    } catch (error) {
+        res.status(403).json({ message: error + ' Server error occurred' });
+    }
+
 };
 
 //  create order
 exports.createOrder = async (req, res) => {
-    const sum = await cartService.sum("total",{where:{buyerId:req.user.id}})
-    const orderData = {
-        buyerId: req.user.id,
-        address: req.body.address,
-        contactNumber: parseInt(req.body.contactNumber),
-        total:sum,
-    };
-    const order = await orderService.createOrder(orderData);
-    const cart = await cartService.getCartAllProduct(req.user.id);
-    for (let i = 0; i < cart.length; i++) {
-        const element = cart[i];
-        const getProduct = await productService.getOneProduct(element.productId);
-        const orderProduct = {
-            orderId: order.id,
-            sellerId: cart[i].sellerId,
-            productId: cart[i].productId,
-            quantity: cart[i].quantity,
-            price: getProduct.price,
-            total: cart[i].quantity * getProduct.price
+    try {
+        const sumOfCartValue = await cartService.sum("total", { where: { buyerId } });
+        const orderData = {
+            buyerId: req.user.id,
+            address: req.body.address,
+            contactNumber: parseInt(req.body.contactNumber),
+            total: sumOfCartValue,
         };
-        await orderService.createOrderProduct(orderProduct);
-        await cartService.deleteFromCart(req.user.id,cart[i].productId);
+        const finalOrder = await orderService.createOrder(orderData);
+        const cartItems = await cartService.getCartAllProduct(req.user.id);
+        for (let i = 0; i < cartItems.length; i++) {
+            const element = cartItems[i];
+            const productDetails = await productService.getProduct(element.productId);
+            const orderProduct = {
+                orderId: finalOrder.id,
+                sellerId: cartItems[i].sellerId,
+                productId: cartItems[i].productId,
+                quantity: cartItems[i].quantity,
+                price: productDetails.price,
+                total: cartItems[i].quantity * productDetails.price,
+            };
+            const stockUpdate = productDetails.stock - cartItems[i].quantity;
+            await productService.updateProduct(productDetails.id, stockUpdate);
+            await orderService.createOrderProduct(orderProduct);
+            await cartService.deleteFromCart(req.user.id, cartItems[i].productId);
+        };
+        res.status(200).json({ message: 'Your order placed successfully, Thankyou for shopping visit again.' });
+    } catch (error) {
+        res.status(403).json({ message: error + ' Server error occurred' });
     }
-    res.status(200).json({
-        message: 'Your order placed successfully, Thankyou for shopping visit again.'
-    })
 };

@@ -2,107 +2,133 @@ E-commerce Backend :
 ====================
 
 
-- Steps to follow :
-	1) First Create Documentation for MiniAmazon App
-	1) Table Or Module list
-	2) Rest API (Crud & Other Queries)
-
-
-
 - Module list : 
-	1) User
-	2) Product
-	3) order
+	-	User
+	-	Permissions
+	-	Product
+	-	Cart
+	-	Order
+	-	Order_Product
+
 
 - Apis :
-	1) User Sign up
-	2) Login
-	3) Products CRUD[Create,Read, Update, Delete]
-	4) Orders [Generate Invoice, Order list]
-	5) User list
-	6) Search Product 
-	7) Change Password
-	8) Forgot Password
-	9) placeOrder 
-	10) Order History
-	11) Order list
-	12) list seller
-	13) product seller
-	14) order seller
-	15) Role Update
-	16) Admin User login Api
+	Users
+	-	User SignUp
+	-	User LogIn
+	-	Get Single User
+	-	Get Multiple Users or List of User
+	-	Update User
+	- 	Change Password
+	-	Delete User
+	-	Admin SignUp
+	-	Admin LogIn
+	
+	Permissions
+	-	Add Permissions (Admin Only)
+	-	Permissions List
+	-	Delete Permissions
+
+	Product
+	-	Get Product
+	-	Search product
+	-	Add Product
+	-	Update Product
+	-	Disable Product
+
+	Cart
+	-	Get Cart
+	-	Add and Update to Cart
+	-	Delete Cart
+
+	Order
+	-	Get Order
+	-	Create Order
 
 
-- Fields : 
-		Buyer : 
-			- FirstName
-			- LastName
-			- Contact_Num
-			- Email
-			- Password
-		
-		Seller :
-			- FirstName
-			- LastName
-			- Contact_Num
-			- Email
-			- Password
-		
 
-		Product : 
-			- productName
-			- seller
-			- image
-			- brand
-			- category
-				- Clothes
-					-type
-					-brand
-					-size
-					-color
-				- Laptop
-					-brand
-				- Mobile
-			- description
-			- price
-			- countInstock
-			- rating	
+- Schema : 
 
-		Order :
-			- name
-			- qty
-			- image
-			- price
-			- product : { ref: product }
-			- shippingAddress : {
-				- fullName 
-				- address
-				- city
-				- postalCode
-				- country
-			} 
-			- paymentMethod
-			- itemsPrice
-    		- shippingPrice: 
-     		- taxPrice:
-    		- totalPrice
-    		- user
-    		- seller
-    		- isPaid
-    		- paidAt
-    		- isDelivered
-    		- deliveredAt
+		users
+		-	id(UUID)
+		-	role: Buyer , Seller , Admin
+		-	firstName
+		-	lastName
+		-	contactNumber
+		-	email
+		-	password
+		-	created_at
+		-	updated_at
 
+		products 
+		-	id(UUID)
+		-	sellerId
+		-   productName
+		- 	brand
+		- 	category
+		- 	description
+		- 	price
+		- 	stock
+		-	created_at
+		-	updated_at
+				
+		permissions
+		-	id(UUID)
+		-	operationName
+		-	role
+		-	routes
+		-	created_at
+		-	updated_at
+
+		cart
+		-	id
+		-	buyerId
+		-	productId
+		-	price
+		-	quantity
+		-	total (quantity * at moment price)
+		-	created_at
+		-	updated_at
+
+		order 
+		-	id(UUID)
+		-	buyerId
+		-	address
+		-	contactNumber
+		-	total (Cart total price of all items)
+		-	created_at
+		-	updated_at
+
+		order_product
+		-	id
+		-	orderId
+		-	productId
+		-	quantity
+		-	price
+		-	total
+		-	created_at
+		-	updated_at	
 
 JILL
-	-	folder structure
+	-	Folder Structure
 	-	User (Buyer , Seller , Admin) CURD 
 	-	Change Password API 
 	-	Bcrypt Password hashing in both
-	- 	Joi Validation completed
+	- 	Joi Validation	
 	-	Sanitization
 	-	Route Authorization (Admin or User  in middleware)
 	-	Pagination in Users data (page , size)
+	-	Product CURD
+	-	Add product with Validation
+	-	Update Product with only description, stock, price and image
+	-	Disable Product not Delete 
+	-	Cart CURD
+	-	Create Cart and Get Cart API 
+	-	Order Module
+	- 	Schema Define
+		1.orders
+		2.order_product
+	-	Delete cart when order placed and update in product stock
+	-	Redis
 
 
 
