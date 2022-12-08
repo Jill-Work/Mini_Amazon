@@ -1,7 +1,6 @@
 const productService = require("./productService");
 const cacheData = require("../requests/usersCacheRequest")
 const { Op, where } = require("sequelize");
-const model = require('../models/productModel');
 
 // get Product
 exports.getProduct = async (req, res) => {
