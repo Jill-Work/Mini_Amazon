@@ -51,8 +51,13 @@ exports.productList = async (req, res) => {
 }
 
 // add Product
-exports.addProduct = async (req, res) => {
+<<<<<<< feature-product-functionality
+exports.addProduct = async (req,res) => {
+    console.log("hello");
+
     try {
+    console.log("hello in try ");
+
         const data = req.body;
         let condition = {
             where: {
