@@ -51,7 +51,6 @@ exports.productList = async (req, res) => {
 }
 
 // add Product
-<<<<<<< feature-product-functionality
 exports.addProduct = async (req,res) => {
     console.log("hello");
 
