@@ -3,15 +3,20 @@ const common = require("../common/indexOfCommon");
 const { Op } = require("sequelize");
 const cacheData = require("../requests/usersCacheRequest");
 
-// get product
-exports.getProduct = async (id) => {
-    const data = await model.product.findOne({ where: { id } });
+// // get product
+// exports.getProduct = async (id) => {
+//     const data = await model.product.findOne({ where: { id } });
+//     return common.nullCheckWithDataValues(data);
+// };
+
+exports.getProduct = async (condition) => {
+    const data = await model.product.findOne(condition);
     return common.nullCheckWithDataValues(data);
 };
 
 // list of product
 exports.getProductList = async (condition) => {
-    const data = findAll(condition)
+    const data = await model.product.findAll(condition)
     return common.nullCheckWithOutDataValues(data);
 };
 

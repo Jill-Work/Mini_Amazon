@@ -1,6 +1,7 @@
 const productService = require("./productService");
 const cacheData = require("../requests/usersCacheRequest")
-const { Op } = require("sequelize");
+const { Op, where } = require("sequelize");
+const model = require('../models/productModel');
 
 // get Product
 exports.getProduct = async (req, res) => {
@@ -52,13 +53,10 @@ exports.productList = async (req, res) => {
 
 // add Product
 exports.addProduct = async (req,res) => {
-    console.log("hello");
-
     try {
-    console.log("hello in try ");
-
+        let condition = {};
         const data = req.body;
-        let condition = {
+        condition = {
             where: {
                 [Op.and]: [
                     { sellerId: req.user.id },
@@ -69,14 +67,15 @@ exports.addProduct = async (req,res) => {
                 ]
             }
         };
-        const isProductExist = await productService.findOne(condition);
-        if (!isProductExist) {
+        const isProductExist = await productService.getProduct(condition);
+        if (isProductExist == null) {
             const product = await productService.addProduct(data);
             res.status(403).json(product);
         } else {
             res.status(403).json({ message: ' Product Already Exits' });
         }
     } catch (error) {
+        console.log("errorr", error);
         res.status(403).json({ message: ' Server error occurRed' });
     }
 };
