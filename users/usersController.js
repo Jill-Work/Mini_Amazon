@@ -22,7 +22,7 @@ exports.userDetails = async (req, res) => {
         }
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' });
-    }
+    };
 };
 
 // get users
@@ -55,7 +55,7 @@ exports.userList = async (req, res) => {
         res.status(200).json(users);
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' });
-    }
+    };
 };
 
 //  Sign Up
@@ -65,7 +65,7 @@ exports.userSignUp = async (req, res) => {
         await common.createNewUser(req, res, values);
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' });
-    }
+    };
 };
 
 // log in
@@ -93,7 +93,7 @@ exports.userLogIn = async (req, res) => {
         }
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' });
-    }
+    };
 };
 
 // update users
@@ -146,7 +146,7 @@ exports.userUpdate = async (req, res) => {
         res.status(200).json({ ...updatedData, token });
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' })
-    }
+    };
 };
 
 // change password
@@ -175,7 +175,7 @@ exports.userPasswordChange = async (req, res) => {
         };
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' });
-    }
+    };
 };
 
 // delete users
@@ -187,7 +187,7 @@ exports.userDelete = async (req, res) => {
         res.status(200).json({ "Deleted account was": email });
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' });
-    }
+    };
 };
 
 // add admin
@@ -197,7 +197,7 @@ exports.admin = async (req, res) => {
         await common.createNewUser(req, res, values);
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' });
-    }
+    };
 };
 
 
@@ -210,7 +210,7 @@ exports.listOfRoute = async (req, res) => {
         res.status(200).json(permissionList);
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' });
-    }
+    };
 };
 
 //add route permission
@@ -245,5 +245,5 @@ exports.deleteRoute = async () => {
         res.status(200).json({ "Deleted id was": req.query.id });
     } catch (error) {
         res.status(403).json({ message: error + ' Server error occurred' });
-    }
+    };
 };
