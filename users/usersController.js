@@ -74,7 +74,6 @@ exports.userLogIn = async (req, res) => {
         const { password, email } = req.body;
         const users = await usersService.getUserData({ where: { email } });
         if (!users) return res.status(404).json({ error: "invalid details check again" });
-        console.log(users);
         const userData = {
             firstName: users.firstName,
             lastName: users.lastName,
