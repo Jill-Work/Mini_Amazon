@@ -1,0 +1,139 @@
+E-commerce Backend :
+====================
+
+
+- Module list : 
+	-	User
+	-	Permissions
+	-	Product
+	-	Cart
+	-	Order
+	-	Order_Product
+
+
+- Apis :
+	Users
+	-	User SignUp
+	-	User LogIn
+	-	Get Single User
+	-	Get Multiple Users or List of User
+	-	Update User
+	- 	Change Password
+	-	Delete User
+	-	Admin SignUp
+	-	Admin LogIn
+	
+	Permissions
+	-	Add Permissions (Admin Only)
+	-	Permissions List
+	-	Delete Permissions
+
+	Product
+	-	Get Product
+	-	Search product
+	-	Add Product
+	-	Update Product
+	-	Disable Product
+
+	Cart
+	-	Get Cart
+	-	Add and Update to Cart
+	-	Delete Cart
+
+	Order
+	-	Get Order
+	-	Create Order
+
+
+
+- Schema : 
+
+		users
+		-	id(UUID)
+		-	role: Buyer , Seller , Admin
+		-	firstName
+		-	lastName
+		-	contactNumber
+		-	email
+		-	password
+		-	created_at
+		-	updated_at
+
+		products 
+		-	id(UUID)
+		-	sellerId
+		-   productName
+		- 	brand
+		- 	category
+		- 	description
+		- 	price
+		- 	stock
+		-	created_at
+		-	updated_at
+				
+		permissions
+		-	id(UUID)
+		-	operationName
+		-	role
+		-	routes
+		-	created_at
+		-	updated_at
+
+		cart
+		-	id
+		-	buyerId
+		-	productId
+		-	price
+		-	quantity
+		-	total (quantity * at moment price)
+		-	created_at
+		-	updated_at
+
+		order 
+		-	id(UUID)
+		-	buyerId
+		-	address
+		-	contactNumber
+		-	total (Cart total price of all items)
+		-	created_at
+		-	updated_at
+
+		order_product
+		-	id
+		-	orderId
+		-	productId
+		-	quantity
+		-	price
+		-	total
+		-	created_at
+		-	updated_at	
+
+JILL
+	-	Folder Structure
+	-	User (Buyer , Seller , Admin) CURD 
+	-	Change Password API 
+	-	Bcrypt Password hashing in both
+	- 	Joi Validation	
+	-	Sanitization
+	-	Route Authorization (Admin or User  in middleware)
+	-	Pagination in Users data (page , size)
+	-	Product CURD
+	-	Add product with Validation
+	-	Update Product with only description, stock, price and image
+	-	Disable Product not Delete 
+	-	Cart CURD
+	-	Create Cart and Get Cart API 
+	-	Order Module
+	- 	Schema Define
+		1.orders
+		2.order_product
+	-	Delete cart when order placed and update in product stock
+	-	Redis
+
+
+
+NIKHIL
+
+
+
+
